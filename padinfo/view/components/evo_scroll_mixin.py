@@ -65,7 +65,6 @@ class EvoScrollViewState:
 class EvoScrollView:
     @staticmethod
     def evos_embed_field(state: EvoScrollViewState):
-        return EmbedField(Text("Evo view is currently unavailable."), Text("\u00A0"))  # TODO: Remove this
         field_text = "**Evos**"
         help_text = ""
         # this isn't used right now, but maybe later if discord changes the api for embed titles...?
@@ -79,15 +78,22 @@ class EvoScrollView:
             help_text = ' – Help: {}'.format(" ".join(legend_parts))
         return EmbedField(
             field_text + help_text,
-            HighlightableLinks(
-                links=[LinkedText(
-                    EvoScrollView.alt_fmt(evo),
-                    MonsterLink.header_link(evo.monster, state.qs)
-                ) for evo in state.alt_monsters],
-                highlighted=next(i for i, me in enumerate(state.alt_monsters)
-                                 if state.monster.monster_id == me.monster.monster_id)
-            )
+            Text(', '.join(f'**{EvoScrollView.alt_fmt(evo)}**'
+                           if evo.monster.monster_id == state.monster.monster_id
+                           else EvoScrollView.alt_fmt(evo)
+                           for evo in state.alt_monsters))
         )
+        # return EmbedField(
+        #     field_text + help_text,
+        #     HighlightableLinks(
+        #         links=[LinkedText(
+        #             EvoScrollView.alt_fmt(evo),
+        #             MonsterLink.header_link(evo.monster, state.qs)
+        #         ) for evo in state.alt_monsters],
+        #         highlighted=next(i for i, me in enumerate(state.alt_monsters)
+        #                          if state.monster.monster_id == me.monster.monster_id)
+        #     )
+        # )
 
     @staticmethod
     def alt_fmt(evo: MonsterEvolution):
