@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import List, NamedTuple, Optional, TYPE_CHECKING
 
 from discordmenu.embed.components import EmbedField
-from discordmenu.embed.text import HighlightableLinks, LinkedText
+from discordmenu.embed.text import HighlightableLinks, LinkedText, Text
 from tsutils.query_settings.enums import AltEvoSort
 from tsutils.query_settings.query_settings import QuerySettings
 from tsutils.tsubaki.links import MonsterLink
@@ -65,7 +65,7 @@ class EvoScrollViewState:
 class EvoScrollView:
     @staticmethod
     def evos_embed_field(state: EvoScrollViewState):
-        return EmbedField("Evo view is currently unavailable.", "\u00A0")  # TODO: Remove this
+        return EmbedField(Text("Evo view is currently unavailable."), Text("\u00A0"))  # TODO: Remove this
         field_text = "**Evos**"
         help_text = ""
         # this isn't used right now, but maybe later if discord changes the api for embed titles...?
