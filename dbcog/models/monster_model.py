@@ -121,6 +121,7 @@ class MonsterModel(BaseModel):
         self.has_hqimage: bool = m['has_hqimage']
 
         self.server_priority = m['server_priority']
+        self.reskin_id = m['reskin_id']
 
         self.drop_id = m['drop_id']
         self.mp4_size = m['mp4_size']
