@@ -175,6 +175,8 @@ AWOKEN_SKILL_MAP = {
     AwokenSkills.ENHANCEDHEALPLUS: ('htpa+', 'oeh+', 'oeh', 'oe'),
     AwokenSkills.ANTISKILLBOOST: ('sb-',),
     AwokenSkills.LEVITATE: ('levitate',),
+    AwokenSkills.ENHCOMBO7CPLUS: ('7c+',),
+    AwokenSkills.ELATTACKPLUS: ('el+',),
 }
 
 
