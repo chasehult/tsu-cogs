@@ -360,6 +360,7 @@ class MonsterGraph:
                                    has_animation=m.has_animation == 1,
                                    has_hqimage=m.has_hqimage == 1,
                                    server_priority=server,
+                                   reskin_id=n.reskin_id,
                                    drop_id=m.drop_id,
                                    mp4_size=m.mp4_size,
                                    gif_size=m.gif_size,
