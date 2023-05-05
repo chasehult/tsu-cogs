@@ -1,7 +1,7 @@
 from io import BytesIO
 
 from redbot.core import Config, commands
-from redbot.core.utils.chat_formatting import box, inline, pagify
+from redbot.core.utils.chat_formatting import box, pagify
 from tsutils.cogs.globaladmin import auth_check
 from tsutils.user_interaction import send_cancellation_message, send_confirmation_message
 

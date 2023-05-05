@@ -1,12 +1,9 @@
-from typing import TYPE_CHECKING, List, Union, Optional
+from typing import Optional, TYPE_CHECKING, Union
 
 from discordmenu.embed.base import Box
-from discordmenu.embed.components import EmbedMain, EmbedField
 from discordmenu.embed.text import BoldText, Text
-from discordmenu.embed.view import EmbedView
 from tsutils.menu.components.config import UserConfig
-from tsutils.menu.components.footers import embed_footer_with_state
-from tsutils.menu.pad_view import PadViewState, PadView
+from tsutils.menu.pad_view import PadView, PadViewState
 from tsutils.query_settings.query_settings import QuerySettings
 from tsutils.tsubaki.monster_header import MonsterHeader
 

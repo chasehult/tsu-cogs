@@ -2,10 +2,9 @@ import difflib
 import json
 import logging
 from io import BytesIO
-from typing import Any
 
 import aiohttp
-from redbot.core import checks, commands, Config
+from redbot.core import Config, checks, commands
 from tsutils.helper_functions import repeating_timer
 from tsutils.menu.components.config import BotConfig
 from tsutils.query_settings.query_settings import QuerySettings

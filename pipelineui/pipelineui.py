@@ -2,14 +2,15 @@ import asyncio
 import json
 import logging
 from io import BytesIO
+from typing import Any
 
 import discord
 import pymysql
 from redbot.core import checks, commands
 from redbot.core.utils.chat_formatting import box, inline, pagify
 from tsutils.cog_settings import CogSettings
-from tsutils.user_interaction import send_repeated_consecutive_messages, send_cancellation_message, \
-    send_confirmation_message
+from tsutils.user_interaction import send_cancellation_message, send_confirmation_message, \
+    send_repeated_consecutive_messages
 
 logger = logging.getLogger('red.padbot-cogs.pipelineui')
 
@@ -53,13 +54,13 @@ class PipelineUI(commands.Cog):
         with open(self.settings.configFile(), 'r') as db_config:
             return self.connect(json.load(db_config)).cursor()
 
-    def connect(self, db_config):
+    def connect(self, db_config) -> Any:  # Because the DictCursor won't work, everything else is borked so Any typing
         return pymysql.connect(host=db_config['host'],
                                user=db_config['user'],
                                password=db_config['password'],
                                db=db_config['db'],
                                charset=db_config['charset'],
-                               cursorclass=pymysql.cursors.DictCursor,
+                               cursorclass=pymysql.cursors.DictCursor,  # noqa  It's definitely there.
                                autocommit=True)
 
     @commands.group(aliases=['pdb', 'pui'])
@@ -125,7 +126,7 @@ class PipelineUI(commands.Cog):
             cursor.execute('SELECT sub_dungeon_id, name_en FROM sub_dungeons'
                            ' WHERE dungeon_id = %s'
                            ' ORDER BY sub_dungeon_id', (dungeon_id,))
-            results = list(cursor.fetchall())
+            results: list[dict] = list(cursor.fetchall())
             msg = f'{dg_name}: {dungeon_id}\n\t' + '\n\t'.join(f"{row['name_en']}: {row['sub_dungeon_id']}"
                                                                for row in results)
             for page in pagify(msg):
@@ -298,7 +299,7 @@ class PipelineUI(commands.Cog):
 
         if b"Pipeline completed successfully!" not in stderr:
             logger.error("Pipeline Error:\n" + stderr.decode())
-            await send_cancellation_message(ctx,'Pipeline failed')
+            await send_cancellation_message(ctx, 'Pipeline failed')
         else:
             await send_confirmation_message(ctx, 'Pipeline finished')
 

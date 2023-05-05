@@ -1,10 +1,12 @@
 import re
 from io import BytesIO
-from tsutils.cogs.globaladmin import auth_check
-from redbot.core import Config, commands
-from scorelistener.service_account import SERVICE_ACCOUNT
+
 import firebase_admin
 from firebase_admin import credentials, db
+from redbot.core import Config, commands
+
+from scorelistener.service_account import SERVICE_ACCOUNT
+from tsutils.cogs.globaladmin import auth_check
 
 
 class ScoreListener(commands.Cog):
@@ -65,7 +67,7 @@ class ScoreListener(commands.Cog):
         max_date_ref = db.reference("/info/maxDate/")
 
         date_stamp = message.created_at.timestamp() * 1000
-        if date_stamp >= max_date_ref.get():  # posting final cutoff
+        if date_stamp >= max_date_ref.get():  # noqa (IDK how to fix) # posting final cutoff
             date_stamp = max_date_ref.get()
 
         crown_ref.push(value={

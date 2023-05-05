@@ -1,9 +1,10 @@
-import discord
 import logging
 import re
 from io import BytesIO
+
+import discord
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import box, inline, pagify
+from redbot.core.utils.chat_formatting import box, pagify
 from tsutils.cog_settings import CogSettings
 from tsutils.formatting import normalize_server_name
 from tsutils.user_interaction import send_cancellation_message, send_confirmation_message

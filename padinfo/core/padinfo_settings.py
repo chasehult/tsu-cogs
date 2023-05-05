@@ -51,4 +51,5 @@ class PadInfoSettings(CogSettings):
         self.bot_settings['emoji_use'][emote] = self.bot_settings['emoji_use'].get(emote, 0) + 1
         self.save_settings()
 
+
 settings = PadInfoSettings("padinfo")

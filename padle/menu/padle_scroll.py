@@ -1,4 +1,3 @@
-from math import ceil
 from typing import Optional
 
 from discord import Message

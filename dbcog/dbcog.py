@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import discord
 from redbot.core import Config, checks, commands, data_manager
-from redbot.core.utils.chat_formatting import box, pagify, inline, text_to_file
+from redbot.core.utils.chat_formatting import box, inline, pagify, text_to_file
 from tabulate import tabulate
 from tsutils.cogs.globaladmin import auth_check
 from tsutils.enums import Server
@@ -24,18 +24,18 @@ from tsutils.json_utils import async_cached_dadguide_request
 from tsutils.tsubaki.links import CLOUDFRONT_URL
 from tsutils.user_interaction import StatusManager, send_confirmation_message
 
-from .find_monster import token_mappings
+from dbcog.find_monster.find_monster import FindMonster, MonsterInfo
+from dbcog.find_monster.idtest_mixin import IdTest
+from dbcog.find_monster.token_mappings import AWOKEN_SKILL_MAP, KNOWN_AWOKEN_SKILL_TOKENS, \
+    MONSTER_ATTR_ALIAS_TO_ATTR_MAP, MONSTER_CLASS_ATTRIBUTES
 from .database_context import DbContext
 from .database_loader import load_database
-from dbcog.find_monster.find_monster import FindMonster, MonsterInfo
+from .find_monster import token_mappings
 from .find_monster.extra_info import ExtraInfo
-from dbcog.find_monster.idtest_mixin import IdTest
 from .models.enum_types import DEFAULT_SERVER, SERVERS
 from .models.monster_model import MonsterModel
 from .models.monster_stats import MonsterStatModifierInput, monster_stats
 from .monster_index import MonsterIndex
-from dbcog.find_monster.token_mappings import MONSTER_ATTR_ALIAS_TO_ATTR_MAP, MONSTER_CLASS_ATTRIBUTES, AWOKEN_SKILL_MAP, \
-    KNOWN_AWOKEN_SKILL_TOKENS
 
 logger = logging.getLogger('red.padbot-cogs.dbcog')
 
@@ -168,7 +168,7 @@ class DBCog(commands.Cog, IdTest):
     async def load_old_index(self):
         data = b'\x80\x04}\x94.'
         for server in SERVERS:
-            self.indexes[server] = MonsterIndex.deserialize(data, server, self.database.graph)
+            self.indexes[server] = MonsterIndex.deserialize(data, server, self.database.graph) # noqa
 
         self.mon_finder = FindMonster(self, self.fm_flags_default)
         asyncio.create_task(self.check_index())

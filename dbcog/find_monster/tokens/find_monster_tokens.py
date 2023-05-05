@@ -1,13 +1,11 @@
 from abc import ABC, abstractmethod
 from collections import namedtuple
 from fnmatch import fnmatch
+from itertools import chain
 from typing import Iterable, List, Mapping, NamedTuple, Optional, Set, TYPE_CHECKING, Tuple, Type, TypeVar, Union
 
 import regex as re
 from Levenshtein import jaro, jaro_winkler
-from itertools import chain
-from tsutils.helper_classes import DummyObject
-from tsutils.tsubaki.monster_header import MonsterHeader
 
 from dbcog.find_monster.token_mappings import AWAKENING_TOKENS, AWOKEN_SKILL_MAP, BOOL_MONSTER_ATTRIBUTE_ALIASES, \
     BOOL_MONSTER_ATTRIBUTE_NAMES, \
@@ -17,6 +15,8 @@ from dbcog.find_monster.token_mappings import AWAKENING_TOKENS, AWOKEN_SKILL_MAP
 from dbcog.models.enum_types import Attribute, AwokenSkills
 from dbcog.models.monster_model import MonsterModel
 from dbcog.monster_index import MonsterIndex
+from tsutils.helper_classes import DummyObject
+from tsutils.tsubaki.monster_header import MonsterHeader
 
 if TYPE_CHECKING:
     from dbcog import DBCog
@@ -394,7 +394,7 @@ class SameEvoTree(SubqueryToken):
 
     def get_matching_monsters(self, monster):
         return self.dbcog.database.graph.get_alt_monsters(monster) \
-               + list(self.dbcog.database.graph.get_monsters_with_same_id(monster))
+            + list(self.dbcog.database.graph.get_monsters_with_same_id(monster))
 
 
 class SingleAttributeToken(SpecialToken):
@@ -490,9 +490,9 @@ class OrToken(SpecialToken):
 
     def __init__(self, fullvalue, *, negated=False, exact=False, dbcog):
         self.subqueries = [s.replace('\0', ' ')
-                           for s in re.sub(r'"[^"]+"|\'[^\']+\'',
-                                           lambda m: m.group(0).replace(' ', '\0')[1:-1],
-                                           fullvalue[1:-1]).split()]
+                           for s in str(re.sub(r'"[^"]+"|\'[^\']+\'',
+                                               lambda m: m.group(0).replace(' ', '\0')[1:-1],
+                                               fullvalue[1:-1])).split()]
 
         self.tokens: Optional[List[QueryToken]] = None
         self.results = []
@@ -544,7 +544,7 @@ def calc_ratio_modifier(s1: Union[QueryToken, str], s2: str, prefix_weight: floa
             return 1.0 if s1.value == s2 else 0.0
         s1 = s1.value
 
-    return jaro_winkler(s1, s2, prefix_weight)
+    return jaro_winkler(s1, s2, prefix_weight=prefix_weight)
 
 
 def calc_ratio_name(token: Union[QueryToken, str], full_word: str, prefix_weight: float, index: MonsterIndex) -> float:
@@ -552,7 +552,7 @@ def calc_ratio_name(token: Union[QueryToken, str], full_word: str, prefix_weight
     string = token.value if isinstance(token, QueryToken) else token
 
     mw = index.mwt_to_len[full_word] != 1
-    jw = jaro_winkler(string, full_word, prefix_weight)
+    jw = jaro_winkler(string, full_word, prefix_weight=prefix_weight)
 
     if string != full_word:
         if isinstance(token, QueryToken) and token.exact:

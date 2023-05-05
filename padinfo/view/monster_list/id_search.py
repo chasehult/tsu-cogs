@@ -1,12 +1,12 @@
-from typing import List, Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from tsutils.query_settings.enums import EvoGrouping
 from tsutils.query_settings.query_settings import QuerySettings
 
-from padinfo.view.monster_list.monster_list import MonsterListViewState, MonsterListQueriedProps
+from padinfo.view.monster_list.monster_list import MonsterListQueriedProps, MonsterListViewState
 
 if TYPE_CHECKING:
-    from dbcog.models.monster_model import MonsterModel
+    pass
 
 
 class IdSearchViewState(MonsterListViewState):

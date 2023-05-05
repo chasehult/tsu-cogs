@@ -31,8 +31,8 @@ from tsutils.query_settings.enums import AltEvoSort, CardLevelModifier, CardMode
     LsMultiplier, \
     MonsterLinkTarget, SkillDisplay
 from tsutils.query_settings.query_settings import QuerySettings
-from tsutils.tsubaki.custom_emoji import AWAKENING_ID_TO_EMOJI_NAME_MAP, get_attribute_emoji_by_enum, \
-    get_attribute_emoji_by_monster, get_awakening_emoji, get_type_emoji, get_emoji
+from tsutils.tsubaki.custom_emoji import AWAKENING_ID_TO_EMOJI_NAME_MAP, get_attribute_emoji_by_monster, \
+    get_awakening_emoji, get_emoji, get_type_emoji
 from tsutils.tsubaki.monster_header import MonsterHeader
 from tsutils.user_interaction import send_cancellation_message, send_confirmation_message
 
@@ -59,10 +59,10 @@ from padinfo.view.awakening_help import AwakeningHelpView, AwakeningHelpViewProp
 from padinfo.view.awakening_list import AwakeningListSortTypes, AwakeningListViewState
 from padinfo.view.button_info import ButtonInfoToggles, ButtonInfoViewState
 from padinfo.view.common import invalid_monster_text
-from padinfo.view.dungeon_list.dungeon_list import DungeonListViewProps, DungeonListBase
-from padinfo.view.dungeon_list.jp_dungeon_name import JpDungeonNameViewProps, JpDungeonNameView
-from padinfo.view.dungeon_list.jpytdglead import JpYtDgLeadProps, JpYtDgLeadView
+from padinfo.view.dungeon_list.dungeon_list import DungeonListBase
+from padinfo.view.dungeon_list.jp_dungeon_name import JpDungeonNameView, JpDungeonNameViewProps
 from padinfo.view.dungeon_list.jptwtdglead import JpTwtDgLeadProps, JpTwtDgLeadView
+from padinfo.view.dungeon_list.jpytdglead import JpYtDgLeadProps, JpYtDgLeadView
 from padinfo.view.dungeon_list.skyo_links import SkyoLinksView, SkyoLinksViewProps
 from padinfo.view.evos import EvosViewState
 from padinfo.view.experience_curve import ExperienceCurveView, ExperienceCurveViewProps
@@ -76,7 +76,7 @@ from padinfo.view.lookup import LookupView
 from padinfo.view.materials import MaterialsViewState
 from padinfo.view.monster_list.all_mats import AllMatsViewState
 from padinfo.view.monster_list.id_search import IdSearchViewState
-from padinfo.view.monster_list.monster_list import MonsterListViewState, MonsterListQueriedProps
+from padinfo.view.monster_list.monster_list import MonsterListQueriedProps, MonsterListViewState
 from padinfo.view.monster_list.scroll import ScrollViewState
 from padinfo.view.monster_list.static_monster_list import StaticMonsterListViewState
 from padinfo.view.otherinfo import OtherInfoViewState
@@ -1580,8 +1580,7 @@ class PadInfo(commands.Cog):
         """Link to a Twitter search of a dungeon, with an option to specify leader"""
         return await self.get_dl_menu(ctx, search_text, JpTwtDgLeadProps, JpTwtDgLeadView)
 
-    async def get_dl_menu(self, ctx, search_text, props_type: Type[DungeonListViewProps],
-                          view_type: Type[DungeonListBase]):
+    async def get_dl_menu(self, ctx, search_text, props_type, view_type: Type[DungeonListBase]):
         dbcog = await self.get_dbcog()
         db: "DBCogDatabase" = dbcog.database.database
 
