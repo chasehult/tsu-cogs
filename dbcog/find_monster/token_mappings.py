@@ -239,7 +239,7 @@ MISC_MAP = {
     MiscModifiers.MEDIA: ('media',),
     MiscModifiers.ANIMATED: ('animated',),
     MiscModifiers.MEDAL_EXC: ('medal', 'shop'),
-    MiscModifiers.BLACK_MEDAL: ('blackmetal',),
+    MiscModifiers.BLACK_MEDAL: ('blackmedal',),
     MiscModifiers.CURRENT_EXCHANGE_JP: ('nowshopjp', 'shopnowjp'),
     MiscModifiers.CURRENT_EXCHANGE_NA: ('nowshopna', 'shopnowna'),
     MiscModifiers.CURRENT_EXCHANGE_KR: ('nowshopkr', 'shopnowkr'),
@@ -256,7 +256,7 @@ MULTI_WORD_TOKENS = {tuple(ts.split()) for ts in {
     'super reincarnated',
     'mega awoken',
     'orb skin',
-    'black metal',
+    'black medal',
 }}
 
 ALL_TOKEN_DICTS = {
