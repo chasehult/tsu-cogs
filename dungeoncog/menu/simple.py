@@ -1,13 +1,11 @@
 from typing import Optional
 
 from discord import Message
-from discordmenu.embed.emoji import DELETE_MESSAGE_EMOJI
-from discordmenu.embed.transitions import EmbedMenuDefaultTransitions, EmbedTransition
-from discordmenu.embed.wrapper import EmbedWrapper
 from discordmenu.embed.menu import EmbedMenu
-from tsutils.menu.components.panes import MenuPanes, emoji_buttons
+from discordmenu.embed.wrapper import EmbedWrapper
 
-from dungeoncog.view.simple import SimpleViewState, SimpleView
+from dungeoncog.view.simple import SimpleView, SimpleViewState
+from tsutils.menu.components.panes import MenuPanes, emoji_buttons
 
 
 class SimpleNames:
@@ -20,9 +18,7 @@ class SimpleMenu:
 
     @staticmethod
     def menu():
-        embed = EmbedMenu(SimpleMenuPanes.transitions(), SimpleMenu.message_control,
-                          EmbedMenuDefaultTransitions(
-                              delete_message=EmbedTransition(DELETE_MESSAGE_EMOJI, SimpleMenu.respond_with_delete)))
+        embed = EmbedMenu(SimpleMenuPanes.transitions(), SimpleMenu.message_control)
         return embed
 
     @staticmethod
@@ -31,10 +27,6 @@ class SimpleMenu:
         view_state = await SimpleViewState.deserialize(dbcog, ims, 0)
         control = SimpleMenu.message_control(view_state)
         return control
-
-    @staticmethod
-    async def respond_with_delete(message: Optional[Message], ims, **data):
-        return await message.delete()
 
     @staticmethod
     async def respond_with_right(message: Optional[Message], ims, **data):
@@ -47,7 +39,7 @@ class SimpleMenu:
     def message_control(state: SimpleViewState):
         if state is None:
             return None
-        reaction_list = state.reaction_list
+        reaction_list = state.reaction_list  # noqa TODO: River, fix your code :/
         return EmbedWrapper(
             SimpleView.embed(state),
             reaction_list

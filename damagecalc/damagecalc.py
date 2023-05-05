@@ -1,87 +1,85 @@
-import math
-
-from ply import lex
 from io import BytesIO
+
+import math
+from ply import lex
 from redbot.core import commands
 
 
 class PadLexer(object):
-    tokens = [
+    tokens = (
         'ROWS',
         'TPAS',
         'ATK',
         'OE',
-        #         'ID',
+        # 'ID',
         'MULT',
-
-        #         'RESIST',
-        #         'DEFENCE',
-
+        # 'RESIST',
+        # 'DEFENCE',
         'ROW',
         'TPA',
         'ORB',
         'COMBO',
-    ]
+    )
 
+    @lex.TOKEN(r'rows\(\d+\)')
     def t_ROWS(self, t):
-        r'rows\(\d+\)'
         t.value = t.value.strip('rows(').strip(')')
         t.value = int(t.value)
         return t
 
+    @lex.TOKEN(r'oe\(\d+\)')
     def t_OE(self, t):
-        r'oe\(\d+\)'
         t.value = t.value.strip('oe(').strip(')')
         t.value = int(t.value)
         return t
 
+    @lex.TOKEN(r'tpas\(\d+\)')
     def t_TPAS(self, t):
-        r'tpas\(\d+\)'
         t.value = t.value.strip('tpas(').strip(')')
         t.value = int(t.value)
         return t
 
+    @lex.TOKEN(r'atk\(\d+\)')
     def t_ATK(self, t):
-        r'atk\(\d+\)'
         t.value = t.value.strip('atk(').strip(')')
         t.value = int(t.value)
         return t
 
+    @lex.TOKEN(r'id\(\w+\)')
     def t_ID(self, t):
-        r'id\(\w+\)'
         t.value = t.value.strip('id(').strip(')')
         return t
 
+    @lex.TOKEN(r'multi?\([0-9.]+\)')
     def t_MULT(self, t):
-        r'multi?\([0-9.]+\)'
         t.value = t.value.strip('mult').strip('i').strip('(').strip(')')
         t.value = float(t.value)
         return t
 
+    @lex.TOKEN(r'row(\(\d*\))?')
     def t_ROW(self, t):
-        r'row(\(\d*\))?'
         t.value = t.value.strip('row').strip('(').strip(')')
         t.value = int(t.value) if t.value else 6
         if t.value < 6 or t.value > 30:
-            raise commands.UserFeedbackCheckFailure('row must have 6-30 orbs, got ' + t.value)
+            raise commands.UserFeedbackCheckFailure(f'row must have 6-30 orbs, got {t.value}')
 
         return t
 
+    @lex.TOKEN(r'tpa(\(\))?')
     def t_TPA(self, t):
-        r'tpa(\(\))?'
         t.value = 4
         return t
 
+    @lex.TOKEN(r'orbs?(\([0-9]*\))?')
     def t_ORB(self, t):
-        r'orbs?(\([0-9]*\))?'
         t.value = t.value.strip('orb').strip('s').strip('(').strip(')')
         t.value = int(t.value) if t.value else 3
         if t.value < 3 or t.value > 30:
-            raise commands.UserFeedbackCheckFailure('match must have 3-30 orbs, got ' + t.value)
+            raise commands.UserFeedbackCheckFailure(f'match must have 3-30 orbs, got {t.value}')
         return t
 
+    @lex.TOKEN(r'combos?\(\d+\)')
     def t_COMBO(self, t):
-        r'combos?\(\d+\)'
         t.value = t.value.strip('combo').strip('s').strip('(').strip(')')
         t.value = int(t.value)
         return t
@@ -90,11 +88,6 @@ class PadLexer(object):
 
     def t_error(self, t):
         raise commands.UserFeedbackCheckFailure("Invalid text: '%s'" % (t.value,))
-
-    def build(self, **kwargs):
-        # pass debug=1 to enable verbose output
-        self.lexer = lex.lex(module=self)
-        return self.lexer
 
 
 class DamageConfig(object):
@@ -113,20 +106,20 @@ class DamageConfig(object):
         self.combos = None
 
         for tok in iter(lexer.token, None):
-            type = tok.type
+            t_type = tok.type
             value = tok.value
-            self.rows = self.setIfType('ROWS', type, self.rows, value)
-            self.oe = self.setIfType('OE', type, self.oe, value)
-            self.tpas = self.setIfType('TPAS', type, self.tpas, value)
-            self.atk = self.setIfType('ATK', type, self.atk, value)
-            self.id = self.setIfType('ID', type, self.id, value)
-            self.mult = self.setIfType('MULT', type, self.mult, value)
+            self.rows = self.setIfType('ROWS', t_type, self.rows, value)
+            self.oe = self.setIfType('OE', t_type, self.oe, value)
+            self.tpas = self.setIfType('TPAS', t_type, self.tpas, value)
+            self.atk = self.setIfType('ATK', t_type, self.atk, value)
+            self.id = self.setIfType('ID', t_type, self.id, value)
+            self.mult = self.setIfType('MULT', t_type, self.mult, value)
 
-            if type == 'ROW':
+            if t_type == 'ROW':
                 self.row_matches.append(value)
-            if type == 'TPA':
+            if t_type == 'TPA':
                 self.tpa_matches.append(value)
-            if type == 'ORB':
+            if t_type == 'ORB':
                 if value == 4:
                     self.tpa_matches.append(value)
                 elif value == 30:
@@ -134,7 +127,7 @@ class DamageConfig(object):
                 else:
                     self.orb_matches.append(value)
 
-            self.combos = self.setIfType('COMBOS', type, self.combos, value)
+            self.combos = self.setIfType('COMBOS', t_type, self.combos, value)
 
         if self.rows is None:
             self.rows = 0
@@ -261,7 +254,7 @@ class DamageCalc(commands.Cog):
         Use [p]helpdamage for more info
         """
         try:
-            lexer = PadLexer().build()
+            lexer = lex.lex(module=PadLexer())
             lexer.input(damage_spec)
             config = DamageConfig(lexer)
             damage = config.calculate(all_enhanced=False)

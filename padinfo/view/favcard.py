@@ -1,17 +1,12 @@
-from typing import List, TYPE_CHECKING, Optional
+from typing import List, Optional, TYPE_CHECKING
 
-from discordmenu.embed.components import EmbedMain, EmbedThumbnail, EmbedField
-from discordmenu.embed.view import EmbedView
-from discordmenu.embed.view_state import ViewState
+from discordmenu.embed.components import EmbedField, EmbedThumbnail
 from tsutils.menu.components.config import UserConfig
-from tsutils.menu.components.footers import embed_footer_with_state
-from tsutils.menu.pad_view import PadView
 from tsutils.query_settings.query_settings import QuerySettings
-from tsutils.tsubaki.links import MonsterImage, MonsterLink
-from tsutils.tsubaki.monster_header import MonsterHeader
+from tsutils.tsubaki.links import MonsterImage
 
 from padinfo.view.common import get_monster_from_ims
-from padinfo.view.components.evo_scroll_mixin import EvoScrollView, MonsterEvolution, EvoScrollViewState
+from padinfo.view.components.evo_scroll_mixin import EvoScrollView, EvoScrollViewState, MonsterEvolution
 from padinfo.view.components.padinfo_view import PadinfoView, PadinfoViewState
 
 if TYPE_CHECKING:

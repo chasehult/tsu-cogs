@@ -1,8 +1,8 @@
-import discord
 import re
 from io import BytesIO
-from redbot.core import checks
-from redbot.core import commands
+
+import discord
+from redbot.core import checks, commands
 from redbot.core.utils.chat_formatting import box, pagify
 from tsutils.cog_settings import CogSettings
 
@@ -118,21 +118,21 @@ class PadBuilds(commands.Cog):
     async def list(self, ctx):
         """Shows PAD Builds list"""
         server = ctx.guild
-        commands = self.c_commands.get_key(server.id, default={})
+        existing_commands = self.c_commands.get_key(server.id, default={})
 
-        if not commands:
+        if not existing_commands:
             await ctx.send("There are no PAD Builds in this server."
                            " Use `{}builds add` to start adding some."
                            "".format(ctx.prefix))
             return
 
-        commands = ", ".join([ctx.prefix + c for c in sorted(commands)])
-        commands = "PAD Builds:\n\n" + commands
+        existing_commands = ", ".join([ctx.prefix + c for c in sorted(existing_commands)])
+        existing_commands = "PAD Builds:\n\n" + existing_commands
 
-        if len(commands) < 1500:
-            await ctx.send(box(commands))
+        if len(existing_commands) < 1500:
+            await ctx.send(box(existing_commands))
         else:
-            for page in pagify(commands, delims=[" ", "\n"]):
+            for page in pagify(existing_commands, delims=[" ", "\n"]):
                 await ctx.author.send(box(page))
 
     @commands.Cog.listener("on_message")

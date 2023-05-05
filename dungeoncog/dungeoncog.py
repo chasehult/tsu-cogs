@@ -163,7 +163,6 @@ class DungeonCog(commands.Cog):
                                             dungeon.sub_dungeons[0].name_ja))
         await menu.create(ctx, view_state)
 
-
     @commands.command()
     async def droploc(self, ctx, *, query):
         dbcog = await self.get_dbcog()

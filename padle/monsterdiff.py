@@ -79,8 +79,8 @@ class MonsterDiff:
 
     def get_type_diff(self, monster, guess_monster):
         diff = []
-        for type in guess_monster.types:
-            if type in monster.types:
+        for mon_type in guess_monster.types:
+            if mon_type in monster.types:
                 diff.append(1)
             else:
                 diff.append(0)
@@ -114,9 +114,9 @@ class MonsterDiff:
             line.append("\N{DOWNWARDS BLACK ARROW}\N{VARIATION SELECTOR-16} | ")
         else:
             line.append("\N{UPWARDS BLACK ARROW}\N{VARIATION SELECTOR-16} | ")
-        for type in self.guess_monster.types:
-            line.append(get_type_emoji(type))
-            if type in self.monster.types:
+        for mtype in self.guess_monster.types:
+            line.append(get_type_emoji(mtype))
+            if mtype in self.monster.types:
                 line.append(get_emoji('green_check_custom') + " ")
             else:
                 line.append(get_emoji('red_cross_custom') + " ")

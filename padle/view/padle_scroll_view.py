@@ -1,24 +1,26 @@
 from typing import TYPE_CHECKING
 
-from discordmenu.embed.components import EmbedMain, EmbedField
 from discordmenu.embed.base import Box
+from discordmenu.embed.components import EmbedField, EmbedMain
 from discordmenu.embed.view import EmbedView
-from tsutils.menu.components.footers import embed_footer_with_state
 from tsutils.menu.components.config import UserConfig
+from tsutils.menu.components.footers import embed_footer_with_state
 from tsutils.menu.view.view_state_base import ViewStateBase
+
 from padle.monsterdiff import MonsterDiff
 
-from tsutils.menu.components.footers import TSUBAKI_FLOWER_ICON_URL
-
 if TYPE_CHECKING:
-    from dbcog.models.monster_model import MonsterModel
+    pass
 
 
 class PADleScrollViewState(ViewStateBase):
     VIEW_STATE_TYPE: str = "PADleScrollView"
 
-    def __init__(self, original_author_id, menu_type, raw_query="", monster=None, cur_day_page_guesses=[],
+    def __init__(self, original_author_id, menu_type, raw_query="", monster=None, cur_day_page_guesses=None,
                  current_page=0, extra_state=None, reaction_list=None, current_day: int = 0, num_pages=0):
+        if cur_day_page_guesses is None:
+            cur_day_page_guesses = []
+            
         super().__init__(original_author_id, menu_type, raw_query,
                          extra_state=extra_state)
         self.cur_day_page_guesses = cur_day_page_guesses
@@ -43,8 +45,8 @@ class PADleScrollViewState(ViewStateBase):
     @classmethod
     async def do_queries(cls, dbcog, guess_ids):
         monster_list = []
-        for id in guess_ids:
-            monster_list.append(dbcog.get_monster(int(id)))
+        for mid in guess_ids:
+            monster_list.append(dbcog.get_monster(int(mid)))
         return monster_list
 
     def get_pages_footer(self):

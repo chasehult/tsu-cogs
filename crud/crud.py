@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import time
 from io import BytesIO
 from typing import Any, TYPE_CHECKING
 
@@ -133,8 +134,8 @@ class Crud(CRUDSeries, CRUDAwokenSkills, CRUDLatentSkills, EditSeries):
             tree = index.write_tree()
             email = await self.config.user(ctx.author).email()
             author = pygit2.Signature(re.sub(r'[<>]', '', str(ctx.author)),
-                                      email or "famiel@tsubakibot.com")
-            commiter = pygit2.Signature("Famiel", "famiel@tsubakibot.com")
+                                      email or "famiel@tsubakibot.com", int(time.time()), 0)
+            commiter = pygit2.Signature("Famiel", "famiel@tsubakibot.com", int(time.time()), 0)
             parent, ref = repo.resolve_refish(refish=repo.head.name)
             repo.create_commit(ref.name, author, commiter, f"Updating {filename}", tree, [parent.oid])
             upcred = pygit2.UserPass(keys['username'], keys['token'])

@@ -1,9 +1,9 @@
 from collections import defaultdict
-from typing import NamedTuple, Mapping, Set
+from typing import Mapping, NamedTuple, Set
 
 from frozendict import frozendict
 
-from dbcog.find_monster.tokens.find_monster_tokens import MatchMap
+from dbcog.find_monster.tokens.find_monster_tokens import MatchMap, SubqueryToken
 from dbcog.models.monster_model import MonsterModel
 
 
@@ -54,19 +54,22 @@ class ExtraInfo(NamedTuple):
 
     @staticmethod
     def build_extra_info(monster_matches: MatchMap) -> "ExtraInfo":
-        subquery_data = defaultdict(dict)
-        subquery_mons = defaultdict()
+        # https://youtrack.jetbrains.com/issue/PY-58875
+        subquery_data: dict[SubqueryToken, dict] = defaultdict(dict)
+        subquery_mons = {}
         for monster, match in monster_matches.items():
             for mod_token in match.mod:
                 match_data = mod_token.match_data
                 if match_data.subquery_result:
+                    assert isinstance(match_data.token, SubqueryToken)
                     subquery_data[match_data.token][monster.monster_id] = match_data.subquery_result.monster_id
                     if match_data.subquery_result.monster_id not in subquery_mons:
                         subquery_mons[match_data.subquery_result.monster_id] = match_data.subquery_result
-        subquery_data = {SubqueryData(token.label, token.subquery, frozendict(m))
-                         for token, m in subquery_data.items()}
 
-        subquery_mons = {SubqueryMonsters(frozendict({token: mon}))
-                         for token, mon in subquery_mons.items()}
+        sq_data_set = {SubqueryData(token.label, token.subquery, frozendict(m))
+                       for token, m in subquery_data.items()}
 
-        return ExtraInfo(subquery_data, subquery_mons, 0)
+        sq_mons_set = {SubqueryMonsters(frozendict({token: mon}))
+                       for token, mon in subquery_mons.items()}
+
+        return ExtraInfo(sq_data_set, sq_mons_set, 0)

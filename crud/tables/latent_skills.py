@@ -1,10 +1,7 @@
 import json
-import os
-from datetime import datetime
 from json import JSONDecodeError
 from typing import Awaitable, Callable, TYPE_CHECKING, Tuple
 
-import aiofiles
 from redbot.core import Config, checks
 from redbot.core.commands import Context
 from tsutils.cog_mixins import CogMixin, mixin_group

@@ -23,6 +23,14 @@ class OrbExtractor(object):
         self.find_start_end()
         self.compute_sizes()
 
+        self.xstart = None
+        self.ystart = None
+        self.yend = None
+        self.x_adj = None
+        self.y_adj = None
+        self.orb_adj = None
+        self.orb_size = None
+
     def find_start_end(self):
         img = self.img
         height, width, _ = img.shape
@@ -114,7 +122,7 @@ class NeuralClassifierBoardExtractor(object):
 
     def _process(self):
         import numpy as np
-        import tensorflow as tf
+        import tensorflow as tf  # noqa
 
         oe = OrbExtractor(self.np_img)
 
@@ -136,7 +144,8 @@ class NeuralClassifierBoardExtractor(object):
             box_coords = oe.get_orb_vertices(x, y)
             orb_img = self.img.crop(box_coords)
             orb_img = orb_img.resize((input_orb_size, input_orb_size), PIL.Image.ANTIALIAS)
-            input_data[0] = np.array(orb_img)
+            # https://youtrack.jetbrains.com/issue/PY-44816/False-positive-warning-for-types-implementing-numpy-arrayinterface
+            input_data[0] = np.array(orb_img)  # noqa
 
             interpreter.set_tensor(input_tensor_idx, input_data)
             interpreter.invoke()

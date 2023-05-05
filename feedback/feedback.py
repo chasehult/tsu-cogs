@@ -1,8 +1,7 @@
 from io import BytesIO
 
 import discord
-from redbot.core import checks, commands, Config
-from redbot.core.utils.chat_formatting import inline
+from redbot.core import Config, checks, commands
 from tsutils.cog_settings import CogSettings
 from tsutils.user_interaction import send_cancellation_message, send_confirmation_message
 
@@ -56,7 +55,7 @@ class Feedback(commands.Cog):
 
         try:
             await feedback_channel.send(embed=e)
-        except:
+        except discord.Forbidden:
             await send_cancellation_message(ctx, "I'm unable to deliver your message. Sorry.")
         else:
             await send_confirmation_message(ctx, ("Your message has been sent."

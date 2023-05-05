@@ -1,17 +1,15 @@
+from collections import defaultdict, deque
+from io import BytesIO
+
 import aiohttp
 import cv2
 import discord
 import numpy as np
+from redbot.core import Config, checks, commands
 from tsutils.formatting import extract_image_url
 from tsutils.user_interaction import send_cancellation_message
 
 from .padvision import NeuralClassifierBoardExtractor
-from io import BytesIO
-from collections import defaultdict
-from collections import deque
-from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import inline
-
 
 DAWNGLARE_BOARD_TEMPLATE = "https://pad.dawnglare.com/?patt={}"
 CNINJA_BOARD_TEMPLATE = "https://candyninja001.github.io/Puzzled/?patt={}"
@@ -113,12 +111,12 @@ class PadBoard(commands.Cog):
                 await send_cancellation_message(ctx, "Couldn't find an image in that user's recent messages.")
             else:
                 await send_cancellation_message(ctx,
-                    "Couldn't find an image in your recent messages. Upload or link to one and try again")
+                                                "Couldn't find an image in your recent messages. Upload or link to one and try again")
             return None
 
         image_data = await self.download_image(image_url)
         if not image_data:
-            await send_cancellation_message("Failed to download")
+            await send_cancellation_message(ctx, "Failed to download")
             return None
 
         return image_data
@@ -126,6 +124,7 @@ class PadBoard(commands.Cog):
     async def nc_classify(self, image_data):
         # TODO: Test this (for TR to do)
         nparr = np.frombuffer(image_data, np.uint8)
+        # https://github.com/opencv/opencv/issues/20997
         img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         model_path = await self.config.tflite_path()
         if not model_path:

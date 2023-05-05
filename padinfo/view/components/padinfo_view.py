@@ -1,8 +1,7 @@
-from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, Optional, List
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
-from discordmenu.embed.components import EmbedThumbnail, EmbedField
-from tsutils.menu.pad_view import PadViewState, PadView
+from discordmenu.embed.components import EmbedThumbnail
+from tsutils.menu.pad_view import PadView, PadViewState
 from tsutils.query_settings.query_settings import QuerySettings
 from tsutils.tsubaki.links import MonsterImage, MonsterLink
 from tsutils.tsubaki.monster_header import MonsterHeader

@@ -1,11 +1,11 @@
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
 from discordmenu.embed.base import Box
-from discordmenu.embed.components import EmbedThumbnail, EmbedField, EmbedFooter
+from discordmenu.embed.components import EmbedField, EmbedFooter, EmbedThumbnail
 from discordmenu.embed.text import BoldText
 from tsutils.menu.components.config import UserConfig
 from tsutils.menu.components.footers import embed_footer_with_state
-from tsutils.menu.pad_view import PadViewState, PadView
+from tsutils.menu.pad_view import PadView, PadViewState
 from tsutils.query_settings.query_settings import QuerySettings
 from tsutils.tsubaki.links import MonsterImage
 from tsutils.tsubaki.monster_header import MonsterHeader
@@ -15,7 +15,10 @@ class GlobalStatsViewState(PadViewState):
     VIEW_STATE_TYPE: str = "PADleGlobalStatsView"
 
     def __init__(self, original_author_id, menu_type, qs: QuerySettings, raw_query: str = "",
-                 current_day=0, num_days=0, extra_state=None, reaction_list=None, monster=None, stats=[]):
+                 current_day=0, num_days=0, extra_state=None, reaction_list=None, monster=None, stats=None):
+        if stats is None:
+            stats = []
+            
         super().__init__(original_author_id, menu_type, raw_query, raw_query, qs,
                          extra_state)
         self.reaction_list = reaction_list

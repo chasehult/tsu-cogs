@@ -1,9 +1,8 @@
+import time
 from collections import Counter
 from datetime import datetime, timezone
 from typing import Any
 
-import time
-from discord import Color
 from discordmenu.emoji.emoji_cache import emoji_cache
 from redbot.core import Config, commands
 from redbot.core.bot import Red

@@ -1,13 +1,11 @@
 from typing import Optional
 
 from discord import Message
-from discordmenu.embed.emoji import DELETE_MESSAGE_EMOJI
-from discordmenu.embed.transitions import EmbedTransition, EmbedMenuDefaultTransitions
-from discordmenu.embed.wrapper import EmbedWrapper
 from discordmenu.embed.menu import EmbedMenu
-from tsutils.menu.components.panes import MenuPanes, emoji_buttons
+from discordmenu.embed.wrapper import EmbedWrapper
 
-from dungeoncog.view.dungeon import DungeonViewState, DungeonView
+from dungeoncog.view.dungeon import DungeonView, DungeonViewState
+from tsutils.menu.components.panes import MenuPanes, emoji_buttons
 
 
 class DungeonNames:
@@ -20,9 +18,7 @@ class DungeonMenu:
 
     @staticmethod
     def menu():
-        embed = EmbedMenu(DungeonMenuPanes.transitions(), DungeonMenu.message_control,
-                          EmbedMenuDefaultTransitions(
-                              delete_message=EmbedTransition(DELETE_MESSAGE_EMOJI, DungeonMenu.respond_with_delete)))
+        embed = EmbedMenu(DungeonMenuPanes.transitions(), DungeonMenu.message_control)
         return embed
 
     @staticmethod
@@ -38,10 +34,6 @@ class DungeonMenu:
         view_state = await DungeonViewState.deserialize(dbcog, ims, verbose_toggle=True)
         control = DungeonMenu.message_control(view_state)
         return control
-
-    @staticmethod
-    async def respond_with_delete(message: Optional[Message], ims, **data):
-        return await message.delete()
 
     @staticmethod
     async def respond_with_previous_monster(message: Optional[Message], ims, **data):

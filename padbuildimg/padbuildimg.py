@@ -1,17 +1,17 @@
 import csv
-import math
 import os
 import re
-import urllib
 from io import BytesIO
 from shutil import rmtree
 
 import aiohttp
 import discord
+import math
+import requests
 from PIL import Image, ImageChops, ImageDraw, ImageFont
 from ply import lex
 from redbot.core import checks, commands
-from redbot.core.utils.chat_formatting import box, inline
+from redbot.core.utils.chat_formatting import box
 from tsutils.cog_settings import CogSettings
 from tsutils.tsubaki.links import CLOUDFRONT_URL
 from tsutils.user_interaction import send_cancellation_message, send_confirmation_message
@@ -273,21 +273,22 @@ class PaDTeamLexer:
         'REPEAT',
     ]
 
+    @lex.TOKEN(r'^.+?(?=[\(\|\[\*])|^(?!.*[\(\|\[\*].*).+')
     def t_ID(self, t):
-        r'^.+?(?=[\(\|\[\*])|^(?!.*[\(\|\[\*].*).+'
         # first word before ( or [ or | or * entire word if those characters are not in string
         t.value = t.value.strip()
         return t
 
+    @lex.TOKEN(r'\(.*?\)')
     def t_ASSIST(self, t):
-        r'\(.*?\)'
         # words in ()
         t.value = t.value.strip('()')
         return t
 
+    @lex.TOKEN(r'\[.+?\]')
     def t_LATENT(self, t):
-        r'\[.+?\]'
         # words in []
+        t.value = str(t.value)  # This is a no-op for type checking
         t.value = [lat.strip().lower() for lat in t.value.strip('[]').split(',')]
         for v in t.value.copy():
             if '*' not in v:
@@ -309,23 +310,23 @@ class PaDTeamLexer:
         t.value = [REVERSE_LATENTS_MAP[lat] for lat in t.value if lat in REVERSE_LATENTS_MAP]
         return t
 
+    @lex.TOKEN(r'\|')
     def t_STATS(self, t):
-        r'\|'
         pass
 
+    @lex.TOKEN(r'\s')
     def t_SPACES(self, t):
-        r'\s'
         # spaces must be checked after ID
         pass
 
+    @lex.TOKEN(r'[lL][vV][lL]?\s?\d{1,3}')
     def t_LV(self, t):
-        r'[lL][vV][lL]?\s?\d{1,3}'
         # LV followed by 1~3 digit number
         t.value = int(lstripalpha(t.value[2:]))
         return t
 
+    @lex.TOKEN(r'[sS][lL][vV]\s?(\d{1,2}|[mM][aA][xX])')
     def t_SLV(self, t):
-        r'[sS][lL][vV]\s?(\d{1,2}|[mM][aA][xX])'
         # SL followed by 1~2 digit number or max
         t.value = t.value[3:]
         if t.value.isdigit():
@@ -334,44 +335,44 @@ class PaDTeamLexer:
             t.value = 99
         return t
 
+    @lex.TOKEN(r'[aA][wW]\s?\d')
     def t_AWAKE(self, t):
-        r'[aA][wW]\s?\d'
         # AW followed by 1 digit number
         t.value = int(t.value[2:])
         return t
 
+    @lex.TOKEN(r'[sS][aA]\s?\d')
     def t_SUPER(self, t):
-        r'[sS][aA]\s?\d'
         # SA followed by 1 digit number
         t.value = int(t.value[2:])
         return t
 
+    @lex.TOKEN(r'\+\s?\d{1,3}')
     def t_P_ALL(self, t):
-        r'\+\s?\d{1,3}'
         # + followed by 0 or 297
         t.value = min(int(t.value[1:]), 297)
         return t
 
+    @lex.TOKEN(r'\+[hH]\s?\d{1,2}')
     def t_P_HP(self, t):
-        r'\+[hH]\s?\d{1,2}'
         # +H followed by 1~2 digit number
         t.value = int(t.value[2:])
         return t
 
+    @lex.TOKEN(r'\+[aA]\s?\d{1,2}')
     def t_P_ATK(self, t):
-        r'\+[aA]\s?\d{1,2}'
         # +A followed by 1~2 digit number
         t.value = int(t.value[2:])
         return t
 
+    @lex.TOKEN(r'\+[rR]\s?\d{1,2}')
     def t_P_RCV(self, t):
-        r'\+[rR]\s?\d{1,2}'
         # +R followed by 1~2 digit number
         t.value = int(t.value[2:])
         return t
 
+    @lex.TOKEN(r'\*\s?\d')
     def t_REPEAT(self, t):
-        r'\*\s?\d'
         # * followed by a number
         t.value = min(int(t.value[1:]), MAX_LATENTS)
         return t
@@ -446,7 +447,6 @@ class PadBuildImageGenerator(object):
         self.build = {
             'NAME': build_name,
             'TEAM': [],
-            'INSTRUCTION': None
         }
         self.build_img = None
 
@@ -642,7 +642,7 @@ class PadBuildImageGenerator(object):
         if card['ID'] == DELAY_BUFFER:
             return Image.open(self.params.ASSETS_DIR + DELAY_BUFFER + '.png')
         if 'http' in self.params.PORTRAIT_DIR:
-            portrait = Image.open(urllib.request.urlopen(self.params.PORTRAIT_DIR.format(monster_id=card['ID'])))
+            portrait = Image.open(requests.get(self.params.PORTRAIT_DIR.format(monster_id=card['ID'])).content)
         else:
             portrait = Image.open(self.params.PORTRAIT_DIR.format(monster_id=card['ID']))
         draw = ImageDraw.Draw(portrait)
@@ -694,20 +694,13 @@ class PadBuildImageGenerator(object):
             awake.close()
         return portrait
 
-    def generate_build_image(self, include_instructions=False):
+    def generate_build_image(self):
         if self.build is None:
             return
         team_size = max([len(x) for x in self.build['TEAM']])
-        p_w = self.params.PORTRAIT_WIDTH * math.ceil(team_size / 2) + \
-              self.params.PADDING * math.ceil(team_size / 10)
-        p_h = (self.params.PORTRAIT_WIDTH + self.params.LATENTS_WIDTH + self.params.PADDING) * \
-              2 * len(self.build['TEAM'])
-        include_instructions &= self.build['INSTRUCTION'] is not None
-        if include_instructions:
-            p_h += len(self.build['INSTRUCTION']) * (self.params.PORTRAIT_WIDTH // 2 + self.params.PADDING)
-        self.build_img = Image.new('RGBA',
-                                   (p_w, p_h),
-                                   (255, 255, 255, 0))
+        p_w = self.params.PORTRAIT_WIDTH * math.ceil(team_size / 2) + self.params.PADDING * math.ceil(team_size / 10)
+        p_h = (self.params.PORTRAIT_WIDTH + self.params.LATENTS_WIDTH
+               + self.params.PADDING) * 2 * len(self.build['TEAM'])
         y_offset = 0
         for team in self.build['TEAM']:
             has_assist = any([card is not None for idx, card in enumerate(team) if idx % 2 == 1])
@@ -742,43 +735,15 @@ class PadBuildImageGenerator(object):
             y_offset += self.params.PORTRAIT_WIDTH + self.params.PADDING * 2
             if has_latents:
                 y_offset += self.params.LATENTS_WIDTH * 2
-
-        if include_instructions:
-            y_offset -= self.params.PADDING * 2
-            draw = ImageDraw.Draw(self.build_img)
-            font = ImageFont.truetype(self.params.FONT_NAME, 24)
-            text_padding = text_center_pad(25, self.params.PORTRAIT_WIDTH // 2)
-            for step in self.build['INSTRUCTION']:
-                x_offset = self.params.PADDING
-                outline_text(draw, x_offset, y_offset + text_padding,
-                             font, 'white', 'F{:d} - P{:d} '.format(step['FLOOR'], step['PLAYER'] + 1))
-                x_offset += self.params.PORTRAIT_WIDTH
-                if step['ACTIVE'] is not None:
-                    actives_used = [self.build['TEAM'][idx][ids]
-                                    for idx, side in enumerate(step['ACTIVE'])
-                                    for ids in side]
-                    for card in actives_used:
-                        if 'http' in self.params.PORTRAIT_DIR:
-                            p_small = Image.open(
-                                urllib.request.urlopen(self.params.PORTRAIT_DIR.format(monster_id=card['ID']))).resize(
-                                (self.params.PORTRAIT_WIDTH // 2, self.params.PORTRAIT_WIDTH // 2), Image.LINEAR)
-                        else:
-                            p_small = Image.open(self.params.PORTRAIT_DIR.format(monster_id=card['ID'])).resize(
-                                (self.params.PORTRAIT_WIDTH // 2, self.params.PORTRAIT_WIDTH // 2), Image.LINEAR)
-                        self.build_img.paste(p_small, (x_offset, y_offset))
-                        x_offset += self.params.PORTRAIT_WIDTH // 2
-                    x_offset += self.params.PADDING
-                outline_text(draw, x_offset, y_offset + text_padding, font, 'white', step['ACTION'])
-                y_offset += self.params.PORTRAIT_WIDTH // 2
-            del draw
-
         self.build_img = trim(self.build_img)
 
 
 class PadBuildImage(commands.Cog):
     """PAD Build Image Generator."""
 
-    def __init__(self, bot):
+    def __init__(self, bot, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
         self.bot = bot
         self.settings = PadBuildImgSettings("padbuildimg")
 
@@ -862,7 +827,8 @@ class PadBuildImage(commands.Cog):
         Refresh assets folder
         """
         async with ctx.typing():
-            await send_confirmation_message(ctx, 'Downloading assets to {}'.format(self.settings.buildImgParams().ASSETS_DIR))
+            await send_confirmation_message(ctx, 'Downloading assets to {}'.format(
+                self.settings.buildImgParams().ASSETS_DIR))
             dbcog = await self.get_dbcog()
             awk_ids = dbcog.database.awoken_skill_map.keys()
             await self.settings.downloadAllAssets(awk_ids)
