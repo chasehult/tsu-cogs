@@ -20,9 +20,6 @@ def board_iterator():
 class OrbExtractor(object):
     def __init__(self, img):
         self.img = img
-        self.find_start_end()
-        self.compute_sizes()
-
         self.xstart = None
         self.ystart = None
         self.yend = None
@@ -30,6 +27,10 @@ class OrbExtractor(object):
         self.y_adj = None
         self.orb_adj = None
         self.orb_size = None
+
+        self.find_start_end()
+        self.compute_sizes()
+
 
     def find_start_end(self):
         img = self.img

@@ -6,9 +6,9 @@ import cv2
 import discord
 import numpy as np
 from redbot.core import Config, checks, commands
+
 from tsutils.formatting import extract_image_url
 from tsutils.user_interaction import send_cancellation_message
-
 from .padvision import NeuralClassifierBoardExtractor
 
 DAWNGLARE_BOARD_TEMPLATE = "https://pad.dawnglare.com/?patt={}"
@@ -92,6 +92,10 @@ class PadBoard(commands.Cog):
             return
 
         board_text_nc = ''.join([''.join(r) for r in img_board_nc])
+        if not board_text_nc.replace('u', ''):
+            await send_cancellation_message(ctx, "PadVision was unable to read the board. "
+                                                 "Ask an admin for more details if it looks valid.")
+            return
         # Convert O (used by padvision code) to X (used by Puzzled for bombs)
         board_text_nc = board_text_nc.replace('o', 'x')
         msg = DAWNGLARE_BOARD_TEMPLATE.format(board_text_nc)
