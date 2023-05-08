@@ -4,14 +4,14 @@ from typing import Any, TYPE_CHECKING
 from discordmenu.emoji.emoji_cache import emoji_cache
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import pagify
+
+from dungeoncog.menu.dungeon import DungeonMenu
+from dungeoncog.menu.menu_map import dungeon_menu_map
+from dungeoncog.proto.enemy_skills_pb2 import MonsterBehavior
+from dungeoncog.view.dungeon import DungeonViewState
 from tsutils.enums import Server
 from tsutils.query_settings.query_settings import QuerySettings
 from tsutils.user_interaction import send_cancellation_message
-
-from dungeoncog.enemy_skills_pb2 import MonsterBehavior
-from dungeoncog.menu.dungeon import DungeonMenu
-from dungeoncog.menu.menu_map import dungeon_menu_map
-from dungeoncog.view.dungeon import DungeonViewState
 
 if TYPE_CHECKING:
     from dbcog.dungeon_context import DungeonContext

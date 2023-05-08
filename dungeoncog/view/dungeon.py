@@ -1,20 +1,20 @@
 import random
-from typing import TYPE_CHECKING, List
+from typing import List, TYPE_CHECKING
 
 import discord
 from discord import Embed
 from discordmenu.embed.base import Box
-from discordmenu.embed.components import EmbedMain, EmbedField
+from discordmenu.embed.components import EmbedField, EmbedMain
 from discordmenu.embed.view import EmbedView
 from discordmenu.embed.view_state import ViewState
+
+from dungeoncog.dungeon_monster import DungeonMonster
+from dungeoncog.processors import process_monster
+from dungeoncog.proto.enemy_skills_pb2 import MonsterBehavior
 from tsutils.enums import Server
 from tsutils.menu.components.footers import embed_footer_with_state
 from tsutils.query_settings.query_settings import QuerySettings
 from tsutils.tsubaki.monster_header import MonsterHeader
-
-from dungeoncog.dungeon_monster import DungeonMonster
-from dungeoncog.enemy_skills_pb2 import MonsterBehavior
-from dungeoncog.processors import process_monster
 
 if TYPE_CHECKING:
     from dbcog.models.encounter_model import EncounterModel
