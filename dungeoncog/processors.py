@@ -2,12 +2,12 @@ import re
 from typing import Optional, TYPE_CHECKING
 
 from discordmenu.emoji.emoji_cache import emoji_cache
-from tsutils.enums import Server
 
 from dungeoncog.dungeon_monster import DungeonMonster
 from dungeoncog.enemy_skill import ProcessedSkill
-from dungeoncog.enemy_skills_pb2 import Behavior, BehaviorGroup, Condition, MonsterBehavior
 from dungeoncog.grouped_skillls import GroupedSkills
+from dungeoncog.proto.enemy_skills_pb2 import Behavior, BehaviorGroup, Condition, MonsterBehavior
+from tsutils.enums import Server
 
 if TYPE_CHECKING:
     from dbcog.models.enemy_skill_model import EnemySkillModel
