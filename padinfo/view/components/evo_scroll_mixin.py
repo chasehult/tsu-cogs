@@ -2,9 +2,11 @@ from abc import abstractmethod
 from typing import List, NamedTuple, Optional, TYPE_CHECKING
 
 from discordmenu.embed.components import EmbedField
+from discordmenu.embed.text import HighlightableLinks, LinkedText
 
 from tsutils.query_settings.enums import AltEvoSort
 from tsutils.query_settings.query_settings import QuerySettings
+from tsutils.tsubaki.links import MonsterLink
 
 if TYPE_CHECKING:
     from dbcog.models.monster_model import MonsterModel
