@@ -2,9 +2,11 @@ from abc import abstractmethod
 from typing import List, NamedTuple, Optional, TYPE_CHECKING
 
 from discordmenu.embed.components import EmbedField
-from discordmenu.embed.text import Text
+from discordmenu.embed.text import HighlightableLinks, LinkedText
+
 from tsutils.query_settings.enums import AltEvoSort
 from tsutils.query_settings.query_settings import QuerySettings
+from tsutils.tsubaki.links import MonsterLink
 
 if TYPE_CHECKING:
     from dbcog.models.monster_model import MonsterModel
@@ -77,22 +79,15 @@ class EvoScrollView:
             help_text = ' – Help: {}'.format(" ".join(legend_parts))
         return EmbedField(
             field_text + help_text,
-            Text(', '.join(f'**{EvoScrollView.alt_fmt(evo)}**'
-                           if evo.monster.monster_id == state.monster.monster_id
-                           else EvoScrollView.alt_fmt(evo)
-                           for evo in state.alt_monsters))
+            HighlightableLinks(
+                links=[LinkedText(
+                    EvoScrollView.alt_fmt(evo),
+                    MonsterLink.header_link(evo.monster, state.qs)
+                ) for evo in state.alt_monsters],
+                highlighted=next(i for i, me in enumerate(state.alt_monsters)
+                                 if state.monster.monster_id == me.monster.monster_id)
+            )
         )
-        # return EmbedField(
-        #     field_text + help_text,
-        #     HighlightableLinks(
-        #         links=[LinkedText(
-        #             EvoScrollView.alt_fmt(evo),
-        #             MonsterLink.header_link(evo.monster, state.qs)
-        #         ) for evo in state.alt_monsters],
-        #         highlighted=next(i for i, me in enumerate(state.alt_monsters)
-        #                          if state.monster.monster_id == me.monster.monster_id)
-        #     )
-        # )
 
     @staticmethod
     def alt_fmt(evo: MonsterEvolution):
