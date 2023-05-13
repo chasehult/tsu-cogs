@@ -1,11 +1,14 @@
-import time
 from collections import Counter
 from datetime import datetime, timezone
 from typing import Any
 
+import time
 from discordmenu.emoji.emoji_cache import emoji_cache
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+
+from crowddata.mixins.adpem.menu.closable_embed import ClosableEmbedMenu
+from crowddata.mixins.adpem.view.show_stats import ShowStatsView, ShowStatsViewProps
 from tsutils.cog_mixins import CogMixin
 from tsutils.emoji import NO_EMOJI, char_to_emoji
 from tsutils.menu.view.closable_embed import ClosableEmbedViewState
@@ -13,9 +16,6 @@ from tsutils.query_settings.query_settings import QuerySettings
 from tsutils.time import NA_TIMEZONE, NEW_DAY, get_last_time
 from tsutils.tsubaki.monster_header import MonsterHeader
 from tsutils.user_interaction import get_user_confirmation, get_user_reaction
-
-from crowddata.mixins.adpem.menu.closable_embed import ClosableEmbedMenu
-from crowddata.mixins.adpem.view.show_stats import ShowStatsView, ShowStatsViewProps
 
 # This is the timestamp of the most recent AdPEM reset
 LAST_RESET = datetime(year=2021, month=12, day=24).timestamp()
@@ -26,7 +26,7 @@ def opted_in(is_opted):
         if is_opted == await ctx.bot.get_cog("CrowdData").config.user(ctx.author).opted_in():
             return True
         if is_opted and len(ctx.invoked_parents) != 1:
-            await ctx.send(f"You need to opt in first via `{ctx.prefix}{ctx.invoked_parents[0]} optin`")
+            await ctx.send(f"You need to opt in first via `{ctx.prefix}adpem optin`")
         return False
 
     return commands.check(check)
@@ -280,7 +280,7 @@ class AdPEMStats(CogMixin):
                            f" {'today' if midnight > time.time() - 24 * 60 * 60 else 'yesterday'}, which "
                            f"is your current number of accounts for reporting. If you're pulling daily on more"
                            f" accounts than this, you may increase your number of accounts via"
-                           f" `{ctx.prefix}{ctx.invoked_parents[0]} setaccounts`, however please keep in"
+                           f" `{ctx.prefix}adpem setaccounts`, however please keep in"
                            f" mind we're very worried about selection bias, so please only do this if you"
                            f" are actually going to report daily!")
             return False
