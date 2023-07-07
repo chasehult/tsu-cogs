@@ -10,11 +10,11 @@ import asyncio
 import logging
 import os
 import shutil
-import time
 from io import BytesIO
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import discord
+import time
 from redbot.core import Config, checks, commands, data_manager
 from redbot.core.utils.chat_formatting import box, inline, pagify, text_to_file
 from tabulate import tabulate
@@ -255,7 +255,11 @@ class DBCog(commands.Cog, IdTest):
                                                 1 * 60 * 60)
 
         logger.info('Loading database')
-        self.database = load_database(self.database, await self.get_debug_monsters())
+        new_db = load_database(await self.get_debug_monsters())
+        if self.database is not None:
+            self.database.close()
+        self.database = new_db
+
         logger.info('Building monster index, triggering ready')
         self._is_ready.set()
         await self.create_index()
