@@ -7,6 +7,7 @@ import os
 import re
 from collections import defaultdict
 from io import BytesIO
+from typing import Optional, TYPE_CHECKING, Tuple, Union
 
 import discord
 import prettytable
@@ -29,6 +30,9 @@ from tsutils.user_interaction import get_user_confirmation, get_user_reaction, s
 from padglobal.menu.closable_embed import ClosableEmbedMenu
 from padglobal.menu.menu_map import padglobal_menu_map
 from padglobal.view.which import UNKNOWN_EDIT_TIMESTAMP, WhichView, WhichViewProps
+
+if TYPE_CHECKING:
+    from dbcog.models.monster_model import MonsterModel
 
 logger = logging.getLogger('red.padbot-cogs.padglobal')
 
@@ -366,7 +370,7 @@ class PadGlobal(commands.Cog):
         json.dump(self.c_commands, open(self.file_path, 'w+'))
         await ctx.send(f"Okay, I've updated {inline('lastevent')} and {inline('currentevent')} accordingly,"
                        f" and cleared {inline('nextevent')}.")
-    
+
     @padglobal.command()
     async def rename(self, ctx, old_name, new_name):
         """Rename a PAD global command"""
@@ -376,7 +380,8 @@ class PadGlobal(commands.Cog):
         if new_name in self.c_commands:
             await ctx.send("A command already exists with that name.")
             return
-        if not await get_user_confirmation(ctx, f"Are you sure you want to rename command {inline(old_name)} to {inline(new_name)}?"):
+        if not await get_user_confirmation(ctx,
+                                           f"Are you sure you want to rename command {inline(old_name)} to {inline(new_name)}?"):
             await ctx.send("The command was not renamed.")
             return
         aliases = await self._find_aliases(old_name)
@@ -788,7 +793,8 @@ class PadGlobal(commands.Cog):
                                        qs, WhichView.VIEW_TYPE, props)
         await menu.create(ctx, state)
 
-    async def _resolve_which(self, ctx, term):
+    async def _resolve_which(self, ctx, term: str) \
+            -> Union[Tuple["MonsterModel", str, Optional[str], bool], Tuple[None, None, None, None]]:
         dbcog = await self.get_dbcog()
         db_context = dbcog.database
 
@@ -811,17 +817,16 @@ class PadGlobal(commands.Cog):
             return m, definition, timestamp, True
 
         monster = dbcog.get_monster(monster_id)
-        name = monster.name_en
 
         if db_context.graph.monster_is_mp_evo(monster) and not monster.in_rem:
-            return name, MP_BUY_MSG.format(ctx.prefix), None, False
+            return m, MP_BUY_MSG.format(ctx.prefix), None, False
         elif db_context.graph.monster_is_farmable_evo(monster):
-            return name, FARMABLE_MSG, None, False
+            return m, FARMABLE_MSG, None, False
         elif check_simple_tree(monster, db_context):
             top_monster = db_context.graph.get_numerical_sort_top_monster(monster)
-            return name, SIMPLE_TREE_MSG.format(top_monster.monster_id, top_monster.name_en), None, False
+            return m, SIMPLE_TREE_MSG.format(top_monster.monster_id, top_monster.name_en), None, False
         else:
-            await send_cancellation_message(ctx, 'No which info for {} (#{})'.format(name, monster_id))
+            await send_cancellation_message(ctx, 'No which info for {} (#{})'.format(m.name_en, monster_id))
             return None, None, None, None
 
     @commands.command()
@@ -831,14 +836,14 @@ class PadGlobal(commands.Cog):
 
         [p]whichto @{0.author.name} saria
         """
-        name, definition, timestamp, success = await self._resolve_which(ctx, term)
-        if name is None or definition is None:
+        monster, definition, timestamp, success = await self._resolve_which(ctx, term)
+        if monster is None or definition is None:
             return
 
         if not success:
-            await ctx.send('Which {}\n{}'.format(name, definition))
+            await ctx.send('Which {}\n{}'.format(monster.name_en, definition))
             return
-        await self._do_send_which(ctx, to_user, name, definition, timestamp)
+        await self._do_send_which(ctx, to_user, monster.name_en, definition, timestamp)
 
     async def which_to_text(self):
         monsters = defaultdict(list)
@@ -920,7 +925,8 @@ class PadGlobal(commands.Cog):
         definition = replace_emoji_names_with_code(self._get_emojis(), definition)
         self.settings.addWhich(name, definition)
         await send_confirmation_message(ctx, "PAD which info successfully {} for [{}] {}.".format(bold(op),
-                                                                                        m.monster_no, m.name_en))
+                                                                                                  m.monster_no,
+                                                                                                  m.name_en))
 
     @pwhich.command(name='remove', aliases=['rm', 'delete', 'del'])
     async def pwhich_remove(self, ctx, *, monster_id: int):
@@ -996,11 +1002,11 @@ class PadGlobal(commands.Cog):
         if operation == 'prepend':
             self.settings.addWhich(mon_id, '{}\n\n{}'.format(addition, definition))
             await send_confirmation_message(ctx, "Successfully {} to PAD which info for [{}] {}.".format(
-                                                                        bold('prepended'), m.monster_no_na, m.name_en))
+                bold('prepended'), m.monster_no_na, m.name_en))
         elif operation == 'append':
             self.settings.addWhich(mon_id, '{}\n\n{}'.format(definition, addition))
             await send_confirmation_message(ctx, "Successfully {} to PAD which info for [{}] {}.".format(
-                                                                        bold('appended'), m.monster_no, m.name_en))
+                bold('appended'), m.monster_no, m.name_en))
         else:
             raise KeyError("Invalid operation: Must be \'prepend\' or \'append\'")
 
