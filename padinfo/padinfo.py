@@ -1344,7 +1344,7 @@ class PadInfo(commands.Cog):
 
         def write_name_token(token_dict, token_type, is_multiword=False):
             def f(m, s):
-                return bold(s) if DGCOG.database.graph.monster_is_base(m) else s
+                return bold(s, escape_formatting=False) if DGCOG.database.graph.monster_is_base(m) else s
 
             token_ret = ""
             so = []
