@@ -1356,7 +1356,7 @@ class PadInfo(commands.Cog):
                 token_ret += f"... ({len(so)} total)" if len(so) > 10 else ""
             elif so:
                 token_ret += f"\n\n{token_type}\n" + "\n".join(
-                    f(m, f"{str(m.monster_id).rjust(4)}. {m.name_en}") for m in so)
+                    f(m, f"{str(m.monster_id).rjust(4)}\\. {m.name_en}") for m in so)
             return token_ret
 
         ret += write_name_token(index.manual, "\N{LARGE PURPLE CIRCLE} [Multi-Word Tokens]", True)
