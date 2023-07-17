@@ -794,7 +794,7 @@ class PadGlobal(commands.Cog):
         await menu.create(ctx, state)
 
     async def _resolve_which(self, ctx, term: str) \
-            -> Union[Tuple[MonsterModel, str, Optional[str], bool], Tuple[None, None, None, None]]:
+            -> Union[Tuple["MonsterModel", str, Optional[str], bool], Tuple[None, None, None, None]]:
         dbcog = await self.get_dbcog()
         db_context = dbcog.database
 
