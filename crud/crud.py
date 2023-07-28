@@ -1,7 +1,6 @@
 import json
 import logging
 import re
-import time
 from io import BytesIO
 from typing import Any, TYPE_CHECKING
 
@@ -9,6 +8,7 @@ import aiofiles
 import aiomysql
 import discord
 import pygit2
+import time
 from redbot.core import Config, checks, commands, errors
 from redbot.core.utils.chat_formatting import box, inline, pagify
 from tsutils.cogs.globaladmin import auth_check
@@ -239,6 +239,14 @@ class Crud(CRUDSeries, CRUDAwokenSkills, CRUDLatentSkills, EditSeries):
         if monster is None:
             return await ctx.send("No matching monster found.")
         await ctx.send(f"{MonsterHeader.text_with_emoji(monster)} is in GungHo Collab #{monster.collab_id}")
+
+    @commands.command(aliases=['latent#'])
+    async def latentskillid(self, ctx, monster_id: int):
+        async with await self.get_cursor() as cursor:
+            await cursor.execute("SELECT latent_skill_id, name_en FROM latent_skills WHERE monster_id = %i" % monster_id)
+            if not (results := await cursor.fetchall()):
+                return await send_cancellation_message(ctx, "Tell Aradia to update this command!  Something is broken!")
+            await ctx.send(f"This Tamadra grants latent skill #{results[0]['latent_skill_id']}")
 
     @crud.command()
     async def setmyemail(self, ctx, email=None):
