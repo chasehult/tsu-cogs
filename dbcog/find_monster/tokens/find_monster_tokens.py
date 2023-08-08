@@ -1,13 +1,15 @@
 from abc import ABC, abstractmethod
 from collections import namedtuple
 from fnmatch import fnmatch
-from itertools import chain
 from typing import Iterable, List, Mapping, NamedTuple, Optional, Set, TYPE_CHECKING, Tuple, Type, TypeVar, Union
 
 import regex as re
 from Levenshtein import jaro, jaro_winkler
+from itertools import chain
+from tsutils.helper_classes import DummyObject
+from tsutils.tsubaki.monster_header import MonsterHeader
 
-from dbcog.find_monster.token_mappings import AWAKENING_TOKENS, AWOKEN_SKILL_MAP, BOOL_MONSTER_ATTRIBUTE_ALIASES, \
+from dbcog.find_monster.token_mappings import BOOL_MONSTER_ATTRIBUTE_ALIASES, \
     BOOL_MONSTER_ATTRIBUTE_NAMES, \
     NUMERIC_MONSTER_ATTRIBUTE_ALIASES, \
     NUMERIC_MONSTER_ATTRIBUTE_NAMES, \
@@ -15,8 +17,6 @@ from dbcog.find_monster.token_mappings import AWAKENING_TOKENS, AWOKEN_SKILL_MAP
 from dbcog.models.enum_types import Attribute, AwokenSkills
 from dbcog.models.monster_model import MonsterModel
 from dbcog.monster_index import MonsterIndex
-from tsutils.helper_classes import DummyObject
-from tsutils.tsubaki.monster_header import MonsterHeader
 
 if TYPE_CHECKING:
     from dbcog import DBCog
@@ -181,7 +181,7 @@ class SpecialToken(QueryToken):
 
 
 class MultipleAwakeningToken(SpecialToken):
-    RE_MATCH = rf"(\d+)-(sa-)?-?({regexlist(AWAKENING_TOKENS)})"
+    RE_MATCH = rf"(\d+)-(sa-)?-?(\S+)"
 
     def __init__(self, fullvalue, *, negated=False, exact=False, dbcog):
         count, sa, awo = re.fullmatch(self.RE_MATCH, fullvalue).groups()
@@ -192,14 +192,15 @@ class MultipleAwakeningToken(SpecialToken):
 
     async def special_matches(self, monster):
         monster_total_awakenings_matching_token = 0
+        index = await self.dbcog.get_index(monster.server_priority)
         for awakening in monster.awakenings:
             if awakening.is_super and not self.allows_super_awakenings:
                 return False, MatchData(self)
 
             # Keep track of whether we matched this cycle for SA check at the end
             matched = True
-            for awoken_skill in (self.dbcog.database.awoken_skill_map[aws.value]
-                                 for aws, tokens in AWOKEN_SKILL_MAP.items()
+            for awoken_skill in (self.dbcog.database.awoken_skill_map[aws]
+                                 for aws, tokens in index.awoken_skill_aliases.items()
                                  if self.awo in tokens):
                 if (equivalence := PLUS_AWOKENSKILL_MAP.get(AwokenSkills(awakening.awoken_skill_id))) \
                         and equivalence.awoken_skill.value == awoken_skill.awoken_skill_id:

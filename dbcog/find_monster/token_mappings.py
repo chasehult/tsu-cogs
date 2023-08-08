@@ -66,119 +66,6 @@ EVO_MAP = {
     EvoTypes.CHIBI: ('chibi', 'mini'),
 }
 
-# awakening view state & awakening help props in padinfo are transforming this dict to `int: tuple`
-# so rewrite those two if this gets refactored at some point in the future!
-AWOKEN_SKILL_MAP = {
-    AwokenSkills.ENHANCEDHP: ('hp+', 'hp'),
-    AwokenSkills.ENHANCEDATK: ('atk+', 'atk'),
-    AwokenSkills.ENHANCEDRCV: ('rcv+', 'rcv'),
-    AwokenSkills.REDUCERED: ('elresr', 'elres'),  # element resist
-    AwokenSkills.REDUCEBLUE: ('elresb', 'elres'),
-    AwokenSkills.REDUCEGREEN: ('elresg', 'elres'),
-    AwokenSkills.REDUCELIGHT: ('elresl', 'elres'),
-    AwokenSkills.REDUCEDARK: ('elresd', 'elres'),
-    AwokenSkills.AUTOHEAL: ('autoheal',),
-    AwokenSkills.BINDRES: ('unbindable', 'bindres'),
-    AwokenSkills.BLINDRES: ('resb', 'bres'),
-    AwokenSkills.JAMMERRES: ('resj', 'jres'),
-    AwokenSkills.POISONRES: ('resp', 'pres'),
-    AwokenSkills.ENHANCEDRED: ('oer', 'oe'),
-    AwokenSkills.ENHANCEDBLUE: ('oeb', 'oe'),
-    AwokenSkills.ENHANCEDGREEN: ('oeg', 'oe'),
-    AwokenSkills.ENHANCEDLIGHT: ('oel', 'oe'),
-    AwokenSkills.ENHANCEDDARK: ('oed', 'oe'),
-    AwokenSkills.EXTMOVE: ('te', 'finger'),
-    AwokenSkills.BINDRECOVERY: ('bindrcv', 'bindclear', 'rowclear'),
-    AwokenSkills.SKILLBOOST: ('sb',),
-    AwokenSkills.REDROW: ('rowr', 'row'),
-    AwokenSkills.BLUEROW: ('rowb', 'row'),
-    AwokenSkills.GREENROW: ('rowg', 'row'),
-    AwokenSkills.LIGHTROW: ('rowl', 'row'),
-    AwokenSkills.DARKROW: ('rowd', 'row'),
-    AwokenSkills.TPA: ('tpa', 'pronged'),
-    AwokenSkills.SKILLBINDRES: ('sbr',),
-    AwokenSkills.ENHANCEDHEAL: ('htpa', 'oeh'),
-    AwokenSkills.MULTIBOOST: ('multi', 'mb'),
-    AwokenSkills.DRAGONKILLER: ('dragonkiller', 'dk', 'drk', 'killer'),
-    AwokenSkills.GODKILLER: ('godkiller', 'gk', 'gok', 'killer'),
-    AwokenSkills.DEVILKILLER: ('devilkiller', 'vk', 'dek', 'killer'),
-    AwokenSkills.MACHINEKILLER: ('machinekiller', 'mk', 'mak', 'killer'),
-    AwokenSkills.BALANCEDKILLER: ('balancedkiller', 'bk', 'bak', 'killer'),
-    AwokenSkills.ATTACKERKILLER: ('attackerkiller', 'ak', 'aak', 'killer'),
-    AwokenSkills.PHYSICALKILLER: ('physicalkiller', 'pk', 'phk', 'killer'),
-    AwokenSkills.HEALERKILLER: ('healerkiller', 'hk', 'hek', 'killer'),
-    AwokenSkills.EVOMATKILLER: ('evokiller', 'evok', 'a2killer'),
-    AwokenSkills.AWOKENKILLER: ('awokenkiller', 'awok', 'a2killer'),
-    AwokenSkills.FODDERKILLER: ('enhancekiller', 'enhk', 'a2killer'),
-    AwokenSkills.REDEEMKILLER: ('vendorkiller', 'vendork', 'a2killer'),
-    AwokenSkills.ENHCOMBO7C: ('7c',),
-    AwokenSkills.GUARDBREAK: ('guardbreak', 'gbr'),
-    AwokenSkills.FUA: ('fua',),
-    AwokenSkills.ENHTEAMHP: ('teamhp', 'thp'),
-    AwokenSkills.ENHTEAMRCV: ('teamrcv', 'trcv'),
-    AwokenSkills.VDP: ('vdp', 'box'),
-    AwokenSkills.EQUIP: (),  # Equip is an evo type
-    AwokenSkills.SUPERFUA: ('sfua',),
-    AwokenSkills.SKILLCHARGE: ('rainbowhaste', 'skillcharge', 'hasteawo'),
-    AwokenSkills.UNBINDABLE: ('unbindable', 'bindres'),
-    AwokenSkills.EXTMOVEPLUS: ('te+', 'te', 'finger+', 'finger'),
-    AwokenSkills.CLOUDRESIST: ('cloudres', 'cloud'),
-    AwokenSkills.TAPERESIST: ('taperes', 'tape'),
-    AwokenSkills.SKILLBOOSTPLUS: ('sb+', 'sb'),
-    AwokenSkills.HP50ORMORE: ('>80', '>50', 'highhp'),
-    AwokenSkills.HP50ORLESS: ('<50', 'lowhp'),
-    AwokenSkills.ELSHIELD: ('elshield', 'elh', 'hel'),
-    AwokenSkills.ELATTACK: ('el',),
-    AwokenSkills.ENHCOMBO10C: ('10c',),
-    AwokenSkills.COMBOORB: ('co', 'corb'),
-    AwokenSkills.VOICE: ('voice',),
-    AwokenSkills.DUNGEONBONUS: ('dgbonus', 'dgboost', 'dgb', 'dungeonboost', 'dungeonbonus'),
-    AwokenSkills.REDUCEDHP: ('hp-',),
-    AwokenSkills.REDUCEDATK: ('atk-',),
-    AwokenSkills.REDUCEDRCV: ('rcv-',),
-    AwokenSkills.UNBLINDABLE: ('resb+', 'b+',),
-    AwokenSkills.UNJAMMABLE: ('resj+', 'j+',),
-    AwokenSkills.UNPOISONABLE: ('resp+', 'p+',),
-    AwokenSkills.JAMMERBLESSING: ('jblessing', 'sfj', 'jsurge'),
-    AwokenSkills.POISONBLESSING: ('pblessing', 'sfp', 'psurge'),
-    AwokenSkills.REDCOMBOCOUNT: ('ccr', 'cc'),
-    AwokenSkills.BLUECOMBOCOUNT: ('ccb', 'cc'),
-    AwokenSkills.GREENCOMBOCOUNT: ('ccg', 'cc'),
-    AwokenSkills.LIGHTCOMBOCOUNT: ('ccl', 'cc'),
-    AwokenSkills.DARKCOMBOCOUNT: ('ccd', 'cc'),
-    AwokenSkills.CROSSATTACK: ('crossattack', 'crossblind'),
-    AwokenSkills.ATTR3BOOST: ('attr3', '3attr'),
-    AwokenSkills.ATTR4BOOST: ('attr4', '4attr'),
-    AwokenSkills.ATTR5BOOST: ('attr5', '5attr'),
-    AwokenSkills.BLOBBOOST: ('blobboost', 'blob', 'brickboost', 'brick'),
-    AwokenSkills.ADDTYPEDRAGON: ('typed', 'typedragon'),
-    AwokenSkills.ADDTYPEGOD: ('typeg', 'typegod'),
-    AwokenSkills.ADDTYPEDEVIL: ('typev', 'typedevil'),
-    AwokenSkills.ADDTYPEMACHINE: ('typem', 'typemachine'),
-    AwokenSkills.ADDTYPEBALANCED: ('typeb', 'typebalance', 'typebal', 'typebalanced'),
-    AwokenSkills.ADDTYPEATTACKER: ('typea', 'typeattacker'),
-    AwokenSkills.ADDTYPEPHYSICAL: ('typep', 'typephys', 'typephysical'),
-    AwokenSkills.ADDTYPEHEALER: ('typeh', 'typehealer'),
-    AwokenSkills.SUBATTRRED: ('subattrr', '?r+', 'subattr'),
-    AwokenSkills.SUBATTRBLUE: ('subattrb', '?b+', 'subattb'),
-    AwokenSkills.SUBATTRGREEN: ('subattrg', '?g+', 'subattg'),
-    AwokenSkills.SUBATTRLIGHT: ('subattrl', '?l+', 'subattl'),
-    AwokenSkills.SUBATTRDARK: ('subattrd', '?d+', 'subattd'),
-    AwokenSkills.TPAPLUS: ('tpa+', 'pronged+', 'tpa', 'pronged'),
-    AwokenSkills.SKILLCHARGEPLUS: ('rainbowhaste+', 'skillcharge+', 'hasteawo+', 'rainbowhaste', 'skillcharge', 'hasteawo'),
-    AwokenSkills.AUTOHEALPLUS: ('autoheal+', 'autoheal'),
-    AwokenSkills.ENHANCEDREDPLUS: ('oer+', 'oe+', 'oer', 'oe'),
-    AwokenSkills.ENHANCEDBLUEPLUS: ('oeb+', 'oe+', 'oeb', 'oe'),
-    AwokenSkills.ENHANCEDGREENPLUS: ('oeg+', 'oe+', 'oeg', 'oe'),
-    AwokenSkills.ENHANCEDLIGHTPLUS: ('oel+', 'oe+', 'oel', 'oe'),
-    AwokenSkills.ENHANCEDDARKPLUS: ('oed+', 'oe+', 'oed', 'oe'),
-    AwokenSkills.ENHANCEDHEALPLUS: ('htpa+', 'oeh+', 'oeh', 'oe'),
-    AwokenSkills.ANTISKILLBOOST: ('sb-',),
-    AwokenSkills.LEVITATE: ('levitate',),
-    AwokenSkills.ENHCOMBO7CPLUS: ('7c+',),
-    AwokenSkills.ELATTACKPLUS: ('el+',),
-}
-
 
 class MiscModifiers(Enum):
     STORY = 'Story'
@@ -261,19 +148,16 @@ MULTI_WORD_TOKENS = {tuple(ts.split()) for ts in {
 
 ALL_TOKEN_DICTS = {
     *TYPE_MAP.values(),
-    *AWOKEN_SKILL_MAP.values(),
     *EVO_MAP.values(),
     *MISC_MAP.values(),
 }
 
 KNOWN_MODIFIERS = {v for vs in ALL_TOKEN_DICTS for v in vs}
 
-AWAKENING_TOKENS = {*sum(AWOKEN_SKILL_MAP.values(), ())}
 EVO_TOKENS = {*sum(EVO_MAP.values(), ())}
 TYPE_TOKENS = {*sum(TYPE_MAP.values(), ())}
 
 OTHER_HIDDEN_TOKENS = set() \
-    .union(AWAKENING_TOKENS) \
     .union(EVO_TOKENS) \
     .union(TYPE_TOKENS)
 
@@ -371,8 +255,3 @@ MONSTER_ATTR_ALIAS_TO_ATTR_MAP = {v: k for k, vs in {
     **STRING_MONSTER_ATTRIBUTE_ALIASES,
     **BOOL_MONSTER_ATTRIBUTE_ALIASES,
 }.items() for v in vs}
-
-KNOWN_AWOKEN_SKILL_TOKENS = {}
-for skill, tokens in AWOKEN_SKILL_MAP.items():
-    for token in list(tokens):
-        KNOWN_AWOKEN_SKILL_TOKENS[token] = skill

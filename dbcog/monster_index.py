@@ -11,11 +11,11 @@ from redbot.core.utils import AsyncIter
 from tsutils.enums import Server
 from tsutils.formatting import contains_ja
 
-from dbcog.find_monster.token_mappings import ALL_TOKEN_DICTS, AWOKEN_SKILL_MAP, EVO_MAP, EvoTypes, \
+from dbcog.find_monster.token_mappings import ALL_TOKEN_DICTS, EVO_MAP, EvoTypes, \
     HAZARDOUS_IN_NAME_MODS, KNOWN_MODIFIERS, LEGAL_END_TOKENS, MISC_MAP, MULTI_WORD_TOKENS, MiscModifiers, \
     PROBLEMATIC_SERIES_TOKENS, TYPE_MAP
 from .errors import InvalidGraphState
-from .models.enum_types import Attribute, AwokenSkills, DEFAULT_SERVER
+from .models.enum_types import Attribute, DEFAULT_SERVER
 from .models.monster_model import MonsterModel
 from .monster_graph import MonsterGraph
 
@@ -29,6 +29,7 @@ CARD_MODIFIER_OVERRIDE_SHEET = SHEETS_PATTERN.format(2089525837)
 TREE_MODIFIER_OVERRIDE_SHEET = SHEETS_PATTERN.format(1372419168)
 CONTENT_TOKEN_ALIAS_SHEET = SHEETS_PATTERN.format(1229125459)
 SERIES_OVERRIDES_SHEET = SHEETS_PATTERN.format(959933643)
+AWOKEN_SKILL_SHEET = SHEETS_PATTERN.format(1063132392)
 
 
 class MonsterIndex:
@@ -43,6 +44,7 @@ class MonsterIndex:
         self.monster_id_to_name = defaultdict(set)
         self.monster_id_to_forcedfluff = defaultdict(set)
         self.series_id_to_pantheon_nickname = defaultdict(set)
+        self.awoken_skill_aliases = defaultdict(set)
         self.content_token_aliases = defaultdict(set)
         self.manual_modifiers = defaultdict(set)
         self.manual_removed_modifiers = defaultdict(set)
@@ -66,35 +68,7 @@ class MonsterIndex:
         self.graph: Optional[MonsterGraph] = None
 
     async def reset(self, graph: MonsterGraph):
-        self.is_ready.clear()
-        self.issues = []
-
-        self.monster_id_to_cardname = defaultdict(set)
-        self.monster_id_to_treename = defaultdict(set)
-        self.treename_overrides = set()
-        self.monster_id_to_name = defaultdict(set)
-        self.monster_id_to_forcedfluff = defaultdict(set)
-        self.series_id_to_pantheon_nickname = defaultdict(set)
-        self.content_token_aliases = defaultdict(set)
-        self.manual_modifiers = defaultdict(set)
-        self.manual_removed_modifiers = defaultdict(set)
-
-        self.all_name_tokens = {}
-        self.manual = {}
-        self.manual_cardnames = defaultdict(set)
-        self.manual_treenames = defaultdict(set)
-        self.name_tokens = defaultdict(set)
-        self.fluff_tokens = defaultdict(set)
-
-        self.all_modifiers = set()
-        self._known_mods = set()
-        self.modifiers = defaultdict(set)
-        self.suffixes = set()
-
-        self.multi_word_tokens = {}
-        self.mwtoken_creators = defaultdict(set)
-        self.mwt_to_len = defaultdict(lambda: 1)
-
+        self.__init__(self.server)
         await self.setup(graph)
 
     async def setup(self, graph: MonsterGraph):
@@ -111,20 +85,23 @@ class MonsterIndex:
                                   in monsters
                                   if " " in m.series.name_en.strip()}.union(MULTI_WORD_TOKENS)
 
-        treenames_data, nickname_data, pantheon_data, nt_alias_data, treemod_data, mod_data = await asyncio.gather(
-            sheet_to_reader(TREENAME_OVERRIDES_SHEET,
-                            ('base_id', 'new_treename', 'normal_prio', 'overrides')),
-            sheet_to_reader(CARDNAME_OVERRIDE_SHEET,
-                            ('monster_id', 'name_en', 'normal_prio', 'overrides', 'fluff')),
-            sheet_to_reader(SERIES_OVERRIDES_SHEET,
-                            ('series_id', 'alias')),
-            sheet_to_reader(CONTENT_TOKEN_ALIAS_SHEET,
-                            ('tokens', 'alias')),
-            sheet_to_reader(TREE_MODIFIER_OVERRIDE_SHEET,
-                            ('base_id', 'modifiers')),
-            sheet_to_reader(CARD_MODIFIER_OVERRIDE_SHEET,
-                            ('monster_id', 'modifiers', 'remove')),
-        )
+        treenames_data, nickname_data, series_data, nt_alias_data, treemod_data, mod_data, awo_data = \
+            await asyncio.gather(
+                sheet_to_reader(TREENAME_OVERRIDES_SHEET,
+                                ('base_id', 'new_treename', 'normal_prio', 'overrides')),
+                sheet_to_reader(CARDNAME_OVERRIDE_SHEET,
+                                ('monster_id', 'name_en', 'normal_prio', 'overrides', 'fluff')),
+                sheet_to_reader(SERIES_OVERRIDES_SHEET,
+                                ('series_id', 'alias')),
+                sheet_to_reader(CONTENT_TOKEN_ALIAS_SHEET,
+                                ('tokens', 'alias')),
+                sheet_to_reader(TREE_MODIFIER_OVERRIDE_SHEET,
+                                ('base_id', 'modifiers')),
+                sheet_to_reader(CARD_MODIFIER_OVERRIDE_SHEET,
+                                ('monster_id', 'modifiers', 'remove')),
+                sheet_to_reader(AWOKEN_SKILL_SHEET,
+                                ('awoken_id', 'awoken_name', 'aliases')),
+            )
 
         for data in treenames_data:
             if data['base_id'].isdigit():
@@ -175,13 +152,22 @@ class MonsterIndex:
                         self.multi_word_tokens.add(tuple(name.lower().split(" ")))
                     self.monster_id_to_cardname[mid].add(name.lower().replace(" ", ""))
 
-        for data in pantheon_data:
+        for data in series_data:
             if data['series_id'].isdigit():
                 sid = int(data['series_id'])
                 name = data['alias'].strip().lower()
                 if " " in name:
                     self.multi_word_tokens.add(tuple(name.lower().split(" ")))
                 self.series_id_to_pantheon_nickname[sid].add(name.lower().replace(" ", ""))
+
+        for data in awo_data:
+            if data['awoken_id'].isdigit():
+                awid = int(data['awoken_id'])
+                for alias in data['aliases'].split(','):
+                    alias = alias.strip().lower()
+                    if " " in alias:
+                        self.multi_word_tokens.add(tuple(alias.split(" ")))
+                    self.awoken_skill_aliases[awid].add(alias.replace(" ", ""))
 
         for data in nt_alias_data:
             self.content_token_aliases[frozenset(re.split(r'[,\s]+', data['tokens']))].add(data['alias'])
@@ -217,7 +203,8 @@ class MonsterIndex:
                     for evomid in self.graph.get_alt_ids(self.graph.get_monster(mid, server=self.server)):
                         self.manual_modifiers[evomid].update(aliases)
 
-        self._known_mods = {x for xs in self.series_id_to_pantheon_nickname.values()
+        self._known_mods = {x for xs in [*self.series_id_to_pantheon_nickname.values(),
+                                         *self.awoken_skill_aliases.values()]
                             for x in xs}.union(KNOWN_MODIFIERS)
 
         await self._build_monster_index(monsters)
@@ -467,7 +454,7 @@ class MonsterIndex:
         # Awakenings
         for aw in monster.awakenings:
             try:
-                modifiers.update(AWOKEN_SKILL_MAP[AwokenSkills(aw.awoken_skill_id)])
+                modifiers.update(self.awoken_skill_aliases[aw.awoken_skill_id])
             except ValueError:
                 logger.warning(f"Invalid awoken skill ID: {aw.awoken_skill_id}")
                 self.issues.append(f"Invalid awoken skill ID: {aw.awoken_skill_id}")

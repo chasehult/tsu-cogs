@@ -26,8 +26,7 @@ from tsutils.user_interaction import StatusManager, send_confirmation_message
 
 from dbcog.find_monster.find_monster import FindMonster, MonsterInfo
 from dbcog.find_monster.idtest_mixin import IdTest
-from dbcog.find_monster.token_mappings import AWOKEN_SKILL_MAP, KNOWN_AWOKEN_SKILL_TOKENS, \
-    MONSTER_ATTR_ALIAS_TO_ATTR_MAP, MONSTER_CLASS_ATTRIBUTES
+from dbcog.find_monster.token_mappings import MONSTER_ATTR_ALIAS_TO_ATTR_MAP, MONSTER_CLASS_ATTRIBUTES
 from .database_context import DbContext
 from .database_loader import load_database
 from .find_monster import token_mappings
@@ -80,10 +79,6 @@ class DBCog(commands.Cog, IdTest):
         self.token_maps = token_mappings
         self.DEFAULT_SERVER = DEFAULT_SERVER
         self.SERVERS = SERVERS
-
-        # expose for documentation command
-        self.AWOKEN_SKILL_TOKEN_MAP = AWOKEN_SKILL_MAP
-        self.KNOWN_AWOKEN_SKILL_TOKENS = KNOWN_AWOKEN_SKILL_TOKENS
 
         self.mon_finder = None  # type: Optional[FindMonster]
 
@@ -423,7 +418,8 @@ class DBCog(commands.Cog, IdTest):
         ret += "\n\n### Types\n\n" + tabulate(ttable, headers=["Meaning", "Tokens"], tablefmt="github")
         mtable = [(k.value, ", ".join(map(inline, v))) for k, v in maps.MISC_MAP.items()]
         ret += "\n\n### Misc\n\n" + tabulate(mtable, headers=["Meaning", "Tokens"], tablefmt="github")
-        atable = [(awakenings[k.value].name_en, ", ".join(map(inline, v))) for k, v in maps.AWOKEN_SKILL_MAP.items()]
+        atable = [(awakenings[k].name_en, ", ".join(map(inline, v)))
+                  for k, v in (await self.get_index(server)).awoken_skill_aliases.items()]
         ret += "\n\n### Awakenings\n\n" + tabulate(atable, headers=["Meaning", "Tokens"], tablefmt="github")
         stable = [(series[k].name_en, ", ".join(map(inline, v)))
                   for k, v in (await self.get_index(server)).series_id_to_pantheon_nickname.items()]
