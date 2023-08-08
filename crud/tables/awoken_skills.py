@@ -44,6 +44,12 @@ class CRUDAwokenSkills(CogMixin):
     execute_write: Callable[[Context, str, Tuple], Awaitable[None]]
     git_verify: Callable[[Context, str, str], Awaitable[None]]
 
+    async def get_awo_aliases(self):
+        index = await (await self.get_dbcog()).get_index(Server.COMBINED)
+        return {alias: awo_id
+                for awo_id, aliases in index.awoken_skill_aliases.items()
+                for alias in aliases}
+
     @mixin_group('crud', aliases=['awos'])
     async def awokenskill(self, ctx):
         """Awoken skill related commands"""
@@ -51,11 +57,7 @@ class CRUDAwokenSkills(CogMixin):
     @awokenskill.command()
     async def search(self, ctx, *, search_text):
         """Search for a awoken skill via its jp or na name"""
-        dbcog = await self.get_dbcog()
-        index = await dbcog.get_index(Server.COMBINED)
-        awo_alias_dict = {alias: awo_id
-                          for awo_id, aliases in index.awoken_skill_aliases.items()
-                          for alias in aliases}
+        awo_alias_dict = await self.get_awo_aliases()
         if search_text in awo_alias_dict:
             where = f'awoken_skill_id = %s'
             replacements = (awo_alias_dict[search_text],)
@@ -142,11 +144,7 @@ class CRUDAwokenSkills(CogMixin):
         [p]crud awokenskill edit 100 key1 "Value1" key2 "Value2"
         [p]crud awokenskill edit misc_comboboost key1 "Value1" key2 "Value2"
         """
-        dbcog = await self.get_dbcog()
-        index = await dbcog.get_index(Server.COMBINED)
-        awo_alias_dict = {alias: awo_id
-                          for awo_id, aliases in index.awoken_skill_aliases.items()
-                          for alias in aliases}
+        awo_alias_dict = await self.get_awo_aliases()
         if awoken_skill in awo_alias_dict:
             awoken_skill_id = awo_alias_dict[awoken_skill]
         elif awoken_skill.isdigit():
