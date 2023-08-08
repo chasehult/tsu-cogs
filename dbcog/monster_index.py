@@ -8,12 +8,13 @@ from typing import Dict, List, Optional
 
 import aiohttp
 from redbot.core.utils import AsyncIter
-from tsutils.enums import Server
-from tsutils.formatting import contains_ja
 
 from dbcog.find_monster.token_mappings import ALL_TOKEN_DICTS, EVO_MAP, EvoTypes, \
     HAZARDOUS_IN_NAME_MODS, KNOWN_MODIFIERS, LEGAL_END_TOKENS, MISC_MAP, MULTI_WORD_TOKENS, MiscModifiers, \
     PROBLEMATIC_SERIES_TOKENS, TYPE_MAP
+from tsutils.enums import Server
+from tsutils.formatting import contains_ja
+from tsutils.tsubaki.links import SHEET_TEMPLATE, SheetsTab
 from .errors import InvalidGraphState
 from .models.enum_types import Attribute, DEFAULT_SERVER
 from .models.monster_model import MonsterModel
@@ -21,15 +22,14 @@ from .monster_graph import MonsterGraph
 
 logger = logging.getLogger('red.pad-cogs.dbcog.monster_index')
 
-SHEETS_PATTERN = 'https://docs.google.com/spreadsheets/d/1EoZJ3w5xsXZ67kmarLE4vfrZSIIIAfj04HXeZVST3eY' \
-                 '/pub?gid={}&single=true&output=csv'
-CARDNAME_OVERRIDE_SHEET = SHEETS_PATTERN.format(0)
-TREENAME_OVERRIDES_SHEET = SHEETS_PATTERN.format(2070615818)
-CARD_MODIFIER_OVERRIDE_SHEET = SHEETS_PATTERN.format(2089525837)
-TREE_MODIFIER_OVERRIDE_SHEET = SHEETS_PATTERN.format(1372419168)
-CONTENT_TOKEN_ALIAS_SHEET = SHEETS_PATTERN.format(1229125459)
-SERIES_OVERRIDES_SHEET = SHEETS_PATTERN.format(959933643)
-AWOKEN_SKILL_SHEET = SHEETS_PATTERN.format(1063132392)
+# Remember to publish when adding a new sheet!!!
+CARDNAME_OVERRIDE_SHEET = SHEET_TEMPLATE.format(SheetsTab.CARDNAME_OVERRIDE)
+TREENAME_OVERRIDES_SHEET = SHEET_TEMPLATE.format(SheetsTab.TREENAME_OVERRIDES)
+CARD_MODIFIER_OVERRIDE_SHEET = SHEET_TEMPLATE.format(SheetsTab.CARD_MODIFIER_OVERRIDE)
+TREE_MODIFIER_OVERRIDE_SHEET = SHEET_TEMPLATE.format(SheetsTab.TREE_MODIFIER_OVERRIDE)
+CONTENT_TOKEN_ALIAS_SHEET = SHEET_TEMPLATE.format(SheetsTab.CONTENT_TOKEN_ALIAS)
+SERIES_OVERRIDES_SHEET = SHEET_TEMPLATE.format(SheetsTab.SERIES_OVERRIDES)
+AWOKEN_SKILL_SHEET = SHEET_TEMPLATE.format(SheetsTab.AWOKEN_SKILL)
 
 
 class MonsterIndex:
