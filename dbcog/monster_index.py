@@ -14,7 +14,7 @@ from dbcog.find_monster.token_mappings import ALL_TOKEN_DICTS, EVO_MAP, EvoTypes
     PROBLEMATIC_SERIES_TOKENS, TYPE_MAP
 from tsutils.enums import Server
 from tsutils.formatting import contains_ja
-from tsutils.tsubaki.links import ConfigTab, ID_CONFIG_SHEET_TEMPLATE
+from tsutils.tsubaki.links import SHEET_TEMPLATE, SheetTab
 from .errors import InvalidGraphState
 from .models.enum_types import Attribute, DEFAULT_SERVER
 from .models.monster_model import MonsterModel
@@ -23,13 +23,13 @@ from .monster_graph import MonsterGraph
 logger = logging.getLogger('red.pad-cogs.dbcog.monster_index')
 
 # Remember to publish when adding a new sheet!!!
-CARDNAME_OVERRIDE_SHEET = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.CARDNAME_OVERRIDE)
-TREENAME_OVERRIDES_SHEET = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.TREENAME_OVERRIDES)
-CARD_MODIFIER_OVERRIDE_SHEET = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.CARD_MODIFIER_OVERRIDE)
-TREE_MODIFIER_OVERRIDE_SHEET = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.TREE_MODIFIER_OVERRIDE)
-CONTENT_TOKEN_ALIAS_SHEET = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.CONTENT_TOKEN_ALIAS)
-SERIES_OVERRIDES_SHEET = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.SERIES_OVERRIDES)
-AWOKEN_SKILL_SHEET = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.AWOKEN_SKILL)
+CARDNAME_OVERRIDE_SHEET = SHEET_TEMPLATE.format(SheetTab.CARDNAME_OVERRIDE)
+TREENAME_OVERRIDES_SHEET = SHEET_TEMPLATE.format(SheetTab.TREENAME_OVERRIDES)
+CARD_MODIFIER_OVERRIDE_SHEET = SHEET_TEMPLATE.format(SheetTab.CARD_MODIFIER_OVERRIDE)
+TREE_MODIFIER_OVERRIDE_SHEET = SHEET_TEMPLATE.format(SheetTab.TREE_MODIFIER_OVERRIDE)
+CONTENT_TOKEN_ALIAS_SHEET = SHEET_TEMPLATE.format(SheetTab.CONTENT_TOKEN_ALIAS)
+SERIES_OVERRIDES_SHEET = SHEET_TEMPLATE.format(SheetTab.SERIES_OVERRIDES)
+AWOKEN_SKILL_SHEET = SHEET_TEMPLATE.format(SheetTab.AWOKEN_SKILL)
 
 
 class MonsterIndex:
