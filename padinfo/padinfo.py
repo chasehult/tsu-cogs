@@ -99,7 +99,7 @@ EMBED_NOT_GENERATED = -1
 IDGUIDE = "https://github.com/TsubakiBotPad/pad-cogs/wiki/id-user-guide"
 
 # Remember to publish when adding a new sheet!!!
-CARDNAME_OVERRIDE_SHEET = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.DUNGEONS)
+DUNGEON_ALIASES = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.DUNGEONS)
 
 HISTORY_DURATION = 11
 
