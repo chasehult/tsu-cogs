@@ -82,7 +82,7 @@ from tsutils.query_settings.enums import AltEvoSort, CardLevelModifier, CardMode
 from tsutils.query_settings.query_settings import QuerySettings
 from tsutils.tsubaki.custom_emoji import AWAKENING_ID_TO_EMOJI_NAME_MAP, get_attribute_emoji_by_monster, \
     get_awakening_emoji, get_emoji, get_type_emoji
-from tsutils.tsubaki.links import SHEET_TEMPLATE, SheetsTab
+from tsutils.tsubaki.links import SHEETS_TEMPLATE, SheetsTab
 from tsutils.tsubaki.monster_header import MonsterHeader
 from tsutils.user_interaction import send_cancellation_message, send_confirmation_message
 
@@ -99,7 +99,7 @@ EMBED_NOT_GENERATED = -1
 IDGUIDE = "https://github.com/TsubakiBotPad/pad-cogs/wiki/id-user-guide"
 
 # Remember to publish when adding a new sheet!!!
-DUNGEON_ALIASES = SHEET_TEMPLATE.format(SheetsTab.DUNGEONS)
+DUNGEON_ALIASES = SHEETS_TEMPLATE.format(SheetsTab.DUNGEONS)
 
 HISTORY_DURATION = 11
 
