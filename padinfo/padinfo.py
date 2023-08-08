@@ -17,24 +17,6 @@ from discord import Color
 from discordmenu.emoji.emoji_cache import emoji_cache
 from redbot.core import Config, checks, commands, data_manager
 from redbot.core.utils.chat_formatting import bold, box, inline, pagify
-from tsutils.cogs.donations import is_donor
-from tsutils.cogs.globaladmin import auth_check
-from tsutils.emoji import char_to_emoji
-from tsutils.enums import Server
-from tsutils.json_utils import safe_read_json
-from tsutils.menu.components.config import BotConfig
-from tsutils.menu.simple_text import SimpleTextMenu
-from tsutils.menu.view.closable_embed import ClosableEmbedViewState
-from tsutils.menu.view.simple_text import SimpleTextViewState
-from tsutils.query_settings import converters
-from tsutils.query_settings.enums import AltEvoSort, CardLevelModifier, CardModeModifier, CardPlusModifier, EvoGrouping, \
-    LsMultiplier, \
-    MonsterLinkTarget, SkillDisplay
-from tsutils.query_settings.query_settings import QuerySettings
-from tsutils.tsubaki.custom_emoji import AWAKENING_ID_TO_EMOJI_NAME_MAP, get_attribute_emoji_by_monster, \
-    get_awakening_emoji, get_emoji, get_type_emoji
-from tsutils.tsubaki.monster_header import MonsterHeader
-from tsutils.user_interaction import send_cancellation_message, send_confirmation_message
 
 from padinfo.board_generator import BoardGenerator
 from padinfo.core.button_info import button_info
@@ -84,6 +66,25 @@ from padinfo.view.pantheon import PantheonViewState
 from padinfo.view.pic import PicViewState
 from padinfo.view.series_scroll import SeriesScrollViewState
 from padinfo.view.transforminfo import TransformInfoViewState
+from tsutils.cogs.donations import is_donor
+from tsutils.cogs.globaladmin import auth_check
+from tsutils.emoji import char_to_emoji
+from tsutils.enums import Server
+from tsutils.json_utils import safe_read_json
+from tsutils.menu.components.config import BotConfig
+from tsutils.menu.simple_text import SimpleTextMenu
+from tsutils.menu.view.closable_embed import ClosableEmbedViewState
+from tsutils.menu.view.simple_text import SimpleTextViewState
+from tsutils.query_settings import converters
+from tsutils.query_settings.enums import AltEvoSort, CardLevelModifier, CardModeModifier, CardPlusModifier, EvoGrouping, \
+    LsMultiplier, \
+    MonsterLinkTarget, SkillDisplay
+from tsutils.query_settings.query_settings import QuerySettings
+from tsutils.tsubaki.custom_emoji import AWAKENING_ID_TO_EMOJI_NAME_MAP, get_attribute_emoji_by_monster, \
+    get_awakening_emoji, get_emoji, get_type_emoji
+from tsutils.tsubaki.links import ConfigTab, ID_CONFIG_SHEET_TEMPLATE
+from tsutils.tsubaki.monster_header import MonsterHeader
+from tsutils.user_interaction import send_cancellation_message, send_confirmation_message
 
 if TYPE_CHECKING:
     from dbcog.dbcog import DBCog
@@ -97,9 +98,8 @@ EMBED_NOT_GENERATED = -1
 
 IDGUIDE = "https://github.com/TsubakiBotPad/pad-cogs/wiki/id-user-guide"
 
-DUNGEON_ALIASES = "https://docs.google.com/spreadsheets/d/e/" \
-                  "2PACX-1vQ3F4shS6w2na4FXA-vZyyhKcOQ0zRA1B3T7zaX0Bm4cEjW-1IVw91josPtLgc9Zh_TGh8GTD6zFmd0" \
-                  "/pub?gid=0&single=true&output=csv"
+# Remember to publish when adding a new sheet!!!
+CARDNAME_OVERRIDE_SHEET = ID_CONFIG_SHEET_TEMPLATE.format(ConfigTab.DUNGEONS)
 
 HISTORY_DURATION = 11
 
