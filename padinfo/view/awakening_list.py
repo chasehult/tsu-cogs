@@ -2,8 +2,9 @@ from typing import List
 
 from discordmenu.embed.base import Box
 from discordmenu.embed.components import EmbedField
+from tsutils.enums import Server
 from tsutils.menu.components.config import UserConfig
-from tsutils.menu.pad_view import PadViewState, PadView
+from tsutils.menu.pad_view import PadView, PadViewState
 from tsutils.query_settings.query_settings import QuerySettings
 
 from padinfo.view.common import get_awoken_skill_description
@@ -33,7 +34,7 @@ class AwakeningListViewState(PadViewState):
         # this is the list of allowed modifiers from token_mappings dbcog file (cannot import it bc redbot rules)
         self.token_map = {}
         for k in token_map.keys():
-            self.token_map[k.value] = token_map[k]
+            self.token_map[k] = token_map[k]
 
     def serialize(self):
         ret = super().serialize()
@@ -53,7 +54,7 @@ class AwakeningListViewState(PadViewState):
         current_page = ims['current_page']
         menu_type = ims['menu_type']
         reaction_list = ims['reaction_list']
-        token_map = dbcog.AWOKEN_SKILL_TOKEN_MAP
+        token_map = (await dbcog.get_index(Server.COMBINED)).awoken_skill_aliases
         qs = QuerySettings.deserialize(ims.get('qs'))
         return AwakeningListViewState(original_author_id, menu_type, qs, sort_type, paginated_skills,
                                       current_page, token_map, reaction_list=reaction_list)

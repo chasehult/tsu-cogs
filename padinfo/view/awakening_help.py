@@ -26,7 +26,7 @@ class AwakeningHelpViewProps:
         # this is the list of allowed modifiers from token_mappings dbcog file (cannot import it bc redbot rules)
         self.token_map = {}
         for k in token_map.keys():
-            self.token_map[k.value] = token_map[k]
+            self.token_map[k] = token_map[k]
 
 
 def _get_repeated_desc(prev_index: int, awakening: "AwakeningModel"):

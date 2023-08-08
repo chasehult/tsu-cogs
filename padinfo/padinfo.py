@@ -907,7 +907,8 @@ class PadInfo(commands.Cog):
             paginated_skills = await AwakeningListViewState.do_query(dbcog, sort_type)
             menu = AwakeningListMenu.menu()
             state = AwakeningListViewState(ctx.message.author.id, AwakeningListMenu.MENU_TYPE, qs,
-                                           sort_type, paginated_skills, 0, dbcog.AWOKEN_SKILL_TOKEN_MAP,
+                                           sort_type, paginated_skills, 0,
+                                           (await dbcog.get_index(Server.COMBINED)).awoken_skill_aliases,
                                            reaction_list=AwakeningListMenuPanes.get_user_reaction_list(sort_type))
             await menu.create(ctx, state)
             return
@@ -920,7 +921,8 @@ class PadInfo(commands.Cog):
 
         original_author_id = ctx.message.author.id
         menu = ClosableEmbedMenu.menu()
-        props = AwakeningHelpViewProps(monster=monster, token_map=dbcog.AWOKEN_SKILL_TOKEN_MAP)
+        props = AwakeningHelpViewProps(monster=monster,
+                                       token_map=(await dbcog.get_index(Server.COMBINED)).awoken_skill_aliases)
         state = ClosableEmbedViewState(original_author_id, ClosableEmbedMenu.MENU_TYPE, query,
                                        qs, AwakeningHelpView.VIEW_TYPE, props)
         await menu.create(ctx, state)
@@ -1289,7 +1291,6 @@ class PadInfo(commands.Cog):
                f"     Treenames: {' '.join(sorted(t for t, ms in index.manual_treenames.items() if mon in ms))}\n"
                f"     Nicknames: {' '.join(sorted(t for t, ms in index.manual_cardnames.items() if mon in ms))}\n\n"
                f"[Modifier Tokens]\n"
-               f"     Awakening: {mod_token_str(lambda t: t.split('-')[0] in dbcog.token_maps.AWAKENING_TOKENS)}\n"
                f"    Evo & Type: {mod_token_str(lambda t: t.split('-')[0] in EVOANDTYPE)}\n"
                f"         Other: {mod_token_str(lambda t: t.split('-')[0] not in dbcog.token_maps.OTHER_HIDDEN_TOKENS)}\n"
                f"Manually Added: {' '.join(sorted(manual_modifiers))}\n")
@@ -1336,7 +1337,7 @@ class PadInfo(commands.Cog):
         index = await DGCOG.get_index(server)
 
         tms = DGCOG.token_maps
-        awokengroup = "(" + "|".join(re.escape(aw) for aws in tms.AWOKEN_SKILL_MAP.values() for aw in aws) + ")"
+        awokengroup = "(" + "|".join(re.escape(aw) for aws in index.awoken_skill_aliases.values() for aw in aws) + ")"
         awakenings = {a.awoken_skill_id: a for a in DGCOG.database.get_all_awoken_skills()}
         series = {s.series_id: s for s in DGCOG.database.get_all_series()}
 
@@ -1391,7 +1392,7 @@ class PadInfo(commands.Cog):
             *["Misc: " + k.value + additmods(v, token)
               for k, v in tms.MISC_MAP.items() if token in v],
             *["Awakening: " + get_awakening_emoji(k) + ' ' + awakenings[k.value].name_en + additmods(v, token)
-              for k, v in tms.AWOKEN_SKILL_MAP.items() if token in v],
+              for k, v in index.awoken_skill_aliases.items() if token in v],
             *["Series: " + series[k].name_en + additmods(v, token)
               for k, v in index.series_id_to_pantheon_nickname.items() if token in v],
 
@@ -1400,7 +1401,7 @@ class PadInfo(commands.Cog):
             *[f"[UNSUPPORTED] Multiple awakenings: {m}x {awakenings[a.value].name_en}"
               f"{additmods([f'{m}*{d}' for d in v], token)}"
               for m, ag in re.findall(r"^(\d+)\*{}$".format(awokengroup), token)
-              for a, v in tms.AWOKEN_SKILL_MAP.items() if ag in v]
+              for a, v in index.awoken_skill_aliases.items() if ag in v]
         ])
 
         if meanings or ret:
