@@ -71,7 +71,6 @@ class CRUDAwokenSkills(CogMixin):
         await self.execute_read(ctx, sql, replacements)
 
     @awokenskill.command()
-    @checks.is_owner()
     async def add(self, ctx, *elements):
         """Add a new awoken skill.
 
