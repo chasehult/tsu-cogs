@@ -184,11 +184,36 @@ PROBLEMATIC_SERIES_TOKENS = {
 }
 
 # This probably doesn't belong in here
-PlusAwakeningData = namedtuple("PlusAwakeningData", "awoken_skill value")
-PLUS_AWOKENSKILL_MAP = {
-    AwokenSkills.UNBINDABLE: PlusAwakeningData(AwokenSkills.BINDRES, 2),
-    AwokenSkills.EXTMOVEPLUS: PlusAwakeningData(AwokenSkills.EXTMOVE, 2),
-    AwokenSkills.SKILLBOOSTPLUS: PlusAwakeningData(AwokenSkills.SKILLBOOST, 2),
+EquivalentAwakeningData = namedtuple("EquivalentAwakeningData", "awoken_skill value")
+EQUIVALENT_AWOKENSKILL_MAP = {
+    AwokenSkills.UNBINDABLE: EquivalentAwakeningData(AwokenSkills.BINDRES, 2),
+    AwokenSkills.EXTMOVEPLUS: EquivalentAwakeningData(AwokenSkills.EXTMOVE, 2),
+    AwokenSkills.SKILLBOOSTPLUS: EquivalentAwakeningData(AwokenSkills.SKILLBOOST, 2),
+    AwokenSkills.SKILLCHARGEPLUS: EquivalentAwakeningData(AwokenSkills.SKILLCHARGE, 2),
+    AwokenSkills.AUTOHEAL: EquivalentAwakeningData(AwokenSkills.AUTOHEAL, 2),
+    AwokenSkills.ENHANCEDREDPLUS: EquivalentAwakeningData(AwokenSkills.ENHANCEDRED, 2),
+    AwokenSkills.ENHANCEDBLUEPLUS: EquivalentAwakeningData(AwokenSkills.ENHANCEDBLUE, 2),
+    AwokenSkills.ENHANCEDGREENPLUS: EquivalentAwakeningData(AwokenSkills.ENHANCEDGREEN, 2),
+    AwokenSkills.ENHANCEDLIGHTPLUS: EquivalentAwakeningData(AwokenSkills.ENHANCEDLIGHT, 2),
+    AwokenSkills.ENHANCEDDARKPLUS: EquivalentAwakeningData(AwokenSkills.ENHANCEDDARK, 2),
+    AwokenSkills.ENHCOMBO7CPLUS: EquivalentAwakeningData(AwokenSkills.ENHCOMBO7C, 2),
+    AwokenSkills.VDPPLUS: EquivalentAwakeningData(AwokenSkills.VDP, 2),
+    AwokenSkills.CROSSATTACKPLUS: EquivalentAwakeningData(AwokenSkills.CROSSATTACK, 2),
+    AwokenSkills.ENHCOMBO10CPLUS: EquivalentAwakeningData(AwokenSkills.ENHCOMBO10C, 2),
+    AwokenSkills.ATTR3BOOSTPLUS: EquivalentAwakeningData(AwokenSkills.ATTR3BOOST, 2),
+    AwokenSkills.ATTR4BOOSTPLUS: EquivalentAwakeningData(AwokenSkills.ATTR4BOOST, 2),
+    AwokenSkills.ATTR5BOOSTPLUS: EquivalentAwakeningData(AwokenSkills.ATTR5BOOST, 2),
+    AwokenSkills.BINDRESPLUS: EquivalentAwakeningData(AwokenSkills.BINDRES, 2),
+    AwokenSkills.REDROWX3: EquivalentAwakeningData(AwokenSkills.REDROW, 3),
+    AwokenSkills.BLUEROWX3: EquivalentAwakeningData(AwokenSkills.BLUEROW, 3),
+    AwokenSkills.GREENROWX3: EquivalentAwakeningData(AwokenSkills.GREENROW, 3),
+    AwokenSkills.LIGHTROWX3: EquivalentAwakeningData(AwokenSkills.LIGHTROW, 3),
+    AwokenSkills.DARKROWX3: EquivalentAwakeningData(AwokenSkills.DARKROW, 3),
+    AwokenSkills.REDCOMBOCOUNTPLUS: EquivalentAwakeningData(AwokenSkills.REDCOMBOCOUNT, 2),
+    AwokenSkills.BLUECOMBOCOUNTPLUS: EquivalentAwakeningData(AwokenSkills.BLUECOMBOCOUNT, 2),
+    AwokenSkills.GREENCOMBOCOUNTPLUS: EquivalentAwakeningData(AwokenSkills.GREENCOMBOCOUNT, 2),
+    AwokenSkills.LIGHTCOMBOCOUNTPLUS: EquivalentAwakeningData(AwokenSkills.LIGHTCOMBOCOUNT, 2),
+    AwokenSkills.DARKCOMBOCOUNTPLUS: EquivalentAwakeningData(AwokenSkills.DARKCOMBOCOUNT, 2),
 }
 
 NUMERIC_MONSTER_ATTRIBUTE_ALIASES = {
