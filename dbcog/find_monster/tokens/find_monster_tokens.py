@@ -6,17 +6,15 @@ from typing import Iterable, List, Mapping, NamedTuple, Optional, Set, TYPE_CHEC
 import regex as re
 from Levenshtein import jaro, jaro_winkler
 from itertools import chain
-from tsutils.helper_classes import DummyObject
-from tsutils.tsubaki.monster_header import MonsterHeader
 
-from dbcog.find_monster.token_mappings import BOOL_MONSTER_ATTRIBUTE_ALIASES, \
-    BOOL_MONSTER_ATTRIBUTE_NAMES, \
-    NUMERIC_MONSTER_ATTRIBUTE_ALIASES, \
-    NUMERIC_MONSTER_ATTRIBUTE_NAMES, \
-    PLUS_AWOKENSKILL_MAP, STRING_MONSTER_ATTRIBUTE_ALIASES, STRING_MONSTER_ATTRIBUTE_NAMES
+from dbcog.find_monster.token_mappings import BOOL_MONSTER_ATTRIBUTE_ALIASES, BOOL_MONSTER_ATTRIBUTE_NAMES, \
+    EQUIVALENT_AWOKENSKILL_MAP, NUMERIC_MONSTER_ATTRIBUTE_ALIASES, NUMERIC_MONSTER_ATTRIBUTE_NAMES, \
+    STRING_MONSTER_ATTRIBUTE_ALIASES, STRING_MONSTER_ATTRIBUTE_NAMES
 from dbcog.models.enum_types import Attribute, AwokenSkills
 from dbcog.models.monster_model import MonsterModel
 from dbcog.monster_index import MonsterIndex
+from tsutils.helper_classes import DummyObject
+from tsutils.tsubaki.monster_header import MonsterHeader
 
 if TYPE_CHECKING:
     from dbcog import DBCog
@@ -202,7 +200,7 @@ class MultipleAwakeningToken(SpecialToken):
             for awoken_skill in (self.dbcog.database.awoken_skill_map[aws]
                                  for aws, tokens in index.awoken_skill_aliases.items()
                                  if self.awo in tokens):
-                if (equivalence := PLUS_AWOKENSKILL_MAP.get(AwokenSkills(awakening.awoken_skill_id))) \
+                if (equivalence := EQUIVALENT_AWOKENSKILL_MAP.get(AwokenSkills(awakening.awoken_skill_id))) \
                         and equivalence.awoken_skill.value == awoken_skill.awoken_skill_id:
                     monster_total_awakenings_matching_token += equivalence.value
                     break
