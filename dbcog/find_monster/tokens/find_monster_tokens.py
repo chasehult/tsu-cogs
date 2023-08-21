@@ -611,7 +611,8 @@ def normalize_score(score: float, max_score: float) -> float:
     return score / max_score
 
 
-SPECIAL_TOKEN_TYPES: Set[Type[SpecialToken]] = {
+SPECIAL_TOKEN_TYPES: List[Type[SpecialToken]] = [
+    IDRangeToken,  # Needs to be before MultipleAwakeningToken
     MultipleAwakeningToken,
     MonsterAttributeNumeric,
     MonsterAttributeString,
@@ -623,5 +624,4 @@ SPECIAL_TOKEN_TYPES: Set[Type[SpecialToken]] = {
     SingleAttributeToken,
     MultiAttributeToken,
     OrToken,
-    IDRangeToken,
-}
+]
