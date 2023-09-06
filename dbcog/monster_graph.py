@@ -6,8 +6,8 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Set, Tuple, TypeVar, cast
 
 from networkx import MultiDiGraph
-from tsutils.enums import Server
 
+from tsutils.enums import Server
 from .database_manager import DBCogDatabase
 from .models.active_skill_model import ActiveSkillModel
 from .models.awakening_model import AwakeningModel
@@ -27,8 +27,8 @@ M = TypeVar('M', bound=BaseModel)
 
 MONSTER_QUERY = """SELECT
   monsters{0}.*,
-  monster_name_overrides.name_en AS name_override,
-  monster_name_overrides.is_translation,
+  mnames.name_en AS name_override,
+  mnames.is_translation,
   leader_skills{0}.name_ja AS ls_name_ja,
   leader_skills{0}.name_en AS ls_name_en,
   leader_skills{0}.name_ko AS ls_name_ko,
@@ -60,7 +60,13 @@ FROM
   LEFT OUTER JOIN monsters{0} AS target_monsters ON monsters{0}.name_ja || 'の希石' = target_monsters.name_ja
   LEFT OUTER JOIN exchanges ON target_monsters.monster_id = exchanges.target_monster_id
   LEFT OUTER JOIN drops ON monsters{0}.monster_id = drops.monster_id
-  LEFT OUTER JOIN monster_name_overrides ON monsters{0}.monster_id = monster_name_overrides.monster_id
+  LEFT OUTER JOIN (
+      SELECT * 
+      FROM monster_name_overrides 
+      WHERE tstamp IN (
+        SELECT MAX(tstamp) FROM monster_name_overrides GROUP BY monster_id
+      )) AS mnames
+   ON monsters{0}.monster_id = mnames.monster_id
   LEFT OUTER JOIN monster_image_sizes AS sizes ON monsters{0}.monster_id = sizes.monster_id
 GROUP BY
   monsters{0}.monster_id"""
