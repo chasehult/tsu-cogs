@@ -2,8 +2,6 @@ from collections import defaultdict
 from functools import lru_cache
 from typing import Dict, Iterable, List, Mapping, Optional, Set
 
-from tsutils.enums import Server
-
 from dbcog.database_manager import DBCogDatabase
 from dbcog.models.dungeon_model import DungeonModel
 from dbcog.models.encounter_model import EncounterModel
@@ -12,6 +10,7 @@ from dbcog.models.enemy_skill_model import EnemySkillModel
 from dbcog.models.enum_types import DEFAULT_SERVER
 from dbcog.models.monster_model import MonsterModel
 from dbcog.models.sub_dungeon_model import SubDungeonModel
+from tsutils.enums import Server
 
 
 def format_with_suffix(text: str, server: Server) -> str:
@@ -200,7 +199,7 @@ FROM
   LEFT JOIN dungeons ON schedule.dungeon_id = dungeons.dungeon_id
 """
 
-DROP_QUERY = """SELECT
+DROP_QUERY = """SELECT DISTINCT
   sub_dungeons{0}.sub_dungeon_id
 FROM
   sub_dungeons{0}
