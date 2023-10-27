@@ -182,4 +182,5 @@ class DungeonCog(commands.Cog):
             msg += "\n" + dg.name_en
             for sd in sds:
                 msg += "\n    " + sd.name_en
-        await ctx.send(msg[1:])
+        for page in pagify(msg[1:]):
+            await ctx.send(page)
