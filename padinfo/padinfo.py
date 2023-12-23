@@ -544,7 +544,7 @@ class PadInfo(commands.Cog):
         qs = await QuerySettings.extract_raw(ctx.author, self.bot, query)
         display_options = ButtonInfoToggles()
         alt_monsters = ButtonInfoViewState.get_alt_monsters_and_evos(dbcog, monster)
-        state = ButtonInfoViewState(original_author_id, ButtonInfoMenu.MENU_TYPE, query,  qs,
+        state = ButtonInfoViewState(original_author_id, ButtonInfoMenu.MENU_TYPE, query, qs,
                                     display_options,
                                     monster, alt_monsters, info,
                                     reaction_list=ButtonInfoMenuPanes.get_user_reaction_list(display_options))
@@ -1329,9 +1329,12 @@ class PadInfo(commands.Cog):
         if query:
             await self.debugid(ctx, query=query)
 
-    @commands.command(aliases=["idcheckmod", "lookupmod", "idlookupmod", "luid", "idlu"])
+    @commands.command(aliases=["idcheckmod", "lookupmod", "idlookupmod", "luid", "idlu"], ignore_extra=False)
     async def idmeaning(self, ctx, token, server: Optional[Server] = Server.COMBINED):
-        """Get all the meanings of a token (bold signifies base of a tree)"""
+        """Get all the meanings of a token (bold signifies base of a tree)
+
+        The token must be one word or surrounded by double quotes
+        """
         token = token.replace(" ", "").lower()
         DGCOG = await self.get_dbcog()
         index = await DGCOG.get_index(server)
@@ -1595,7 +1598,7 @@ class PadInfo(commands.Cog):
             monster = await dbcog.find_monster(mon_text, ctx.author.id)
             if monster is None:
                 return await ctx.send(f"No monster found. This command uses `/` or `,` as an optional delimiter to "
-                                    f"specify a leader, maybe try again?")
+                                      f"specify a leader, maybe try again?")
         else:
             dg_text = search_text
             monster = None
@@ -1605,7 +1608,7 @@ class PadInfo(commands.Cog):
         if not sds:
             return await ctx.send(f"No dungeons found. This command uses `/` or `,` as an optional delimiter to "
                                   f"specify a leader, maybe try again?")
-        
+
         dungeons = self.make_dungeon_dict(sds)
 
         menu = ClosableEmbedMenu.menu()
