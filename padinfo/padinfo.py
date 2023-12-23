@@ -1332,7 +1332,7 @@ class PadInfo(commands.Cog):
     @commands.command(aliases=["idcheckmod", "lookupmod", "idlookupmod", "luid", "idlu"])
     async def idmeaning(self, ctx, token, server: Optional[Server] = Server.COMBINED):
         """Get all the meanings of a token (bold signifies base of a tree)"""
-        token = token.replace(" ", "")
+        token = token.replace(" ", "").lower()
         DGCOG = await self.get_dbcog()
         index = await DGCOG.get_index(server)
 
