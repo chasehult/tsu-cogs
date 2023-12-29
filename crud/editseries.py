@@ -8,6 +8,7 @@ from discord.ext.commands import BadArgument, Converter
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import commands
+
 from tsutils.enums import Server
 from tsutils.errors import ClientInlineTextException
 from tsutils.tsubaki.monster_header import MonsterHeader
@@ -211,8 +212,11 @@ class EditSeries:
             confirmation.append("The following monsters will have the series added as a secondary series:\n"
                                 + '\n'.join(map(MonsterHeader.text_with_emoji, secondary)))
         if seen:
-            confirmation.append("The following monsters will not be changed as they already have the series:\n"
-                                + '\n'.join(map(MonsterHeader.text_with_emoji, seen)))
+            seen_text = ("The following monsters will not be changed as they already have the series:\n"
+                         + '\n'.join(map(MonsterHeader.text_with_emoji, seen[:5])))
+            if len(seen) > 5:
+                seen_text += f'\nand {len(seen) - 5} more...'
+            confirmation.append(seen_text)
         if not await get_user_confirmation(ctx, '\n\n'.join(confirmation),
                                            timeout=30, force_delete=False):
             return
@@ -315,8 +319,11 @@ class EditSeries:
             confirmation.append("The following monsters will no longer be unsorted:\n"
                                 + '\n'.join(map(MonsterHeader.text_with_emoji, no_series)))
         if already_primary:
-            confirmation.append("The following monsters will not be changed:\n"
-                                + '\n'.join(map(MonsterHeader.text_with_emoji, already_primary)))
+            already_primary_text = ("The following monsters will not be changed:\n"
+                                    + '\n'.join(map(MonsterHeader.text_with_emoji, already_primary)))
+            if len(already_primary) > 5:
+                already_primary_text += f'\nand {len(already_primary_text) - 5} more...'
+            confirmation.append(already_primary_text)
         if not await get_user_confirmation(ctx, '\n\n'.join(confirmation),
                                            timeout=30, force_delete=False):
             return
