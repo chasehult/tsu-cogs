@@ -47,6 +47,7 @@ class EvoTypes(Enum):
     PIXEL = 'Pixel'
     NONPIXEL = 'Nonpixel'
     CHIBI = 'Chibi'
+    ORDEAL = 'Ordeal'
 
 
 EVO_MAP = {
@@ -64,6 +65,7 @@ EVO_MAP = {
     EvoTypes.PIXEL: ('pixel', 'p', 'dot', 'px'),
     EvoTypes.NONPIXEL: ('nonpixel', 'np'),
     EvoTypes.CHIBI: ('chibi', 'mini'),
+    EvoTypes.ORDEAL: ('ordeal', 'trial', 'transcendant'),
 }
 
 

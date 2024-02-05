@@ -12,6 +12,9 @@ class EvolutionModel(BaseModel):
         self.mat_3_id = kwargs['mat_3_id']
         self.mat_4_id = kwargs['mat_4_id']
         self.mat_5_id = kwargs['mat_5_id']
+        self.evo_dungeon_id = kwargs['evo_dungeon_id']
+        self.evo_dungeon_name = kwargs['evo_dungeon_name']
+        self.ordeal = self.evo_dungeon_id is not None
         self.mats = list(filter(None, [self.mat_1_id, self.mat_2_id, self.mat_3_id, self.mat_4_id, self.mat_5_id]))
         self.is_pixel = self.mat_1_id == 3826
         self.is_super_reincarnated = self.mat_1_id == 5077
