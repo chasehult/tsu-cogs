@@ -124,7 +124,7 @@ class PadInfo(commands.Cog):
         self.remove_emoji = '\N{CROSS MARK}'
 
         self.config = Config.get_conf(self, identifier=9401770)
-        self.config.register_user(color=None, beta_id3=False, id_history=[])
+        self.config.register_user(color=None, id_history=[])
         self.config.register_global(sometimes_perc=20, good=0, bad=0, bad_queries=[])
 
         self.historic_lookups_file_path = _data_file('historic_lookups_id3.json')
@@ -227,18 +227,6 @@ class PadInfo(commands.Cog):
     async def idna(self, ctx, *, query: str):
         """Monster info (limited to NA monsters ONLY)"""
         await self._do_id(ctx, "--na " + query)
-
-    @commands.command()
-    @checks.bot_has_permissions(embed_links=True)
-    async def idjp(self, ctx, *, query: str):
-        """Monster info (limited to JP monsters ONLY)"""
-        await self._do_id(ctx, "injp " + query)
-
-    @commands.command()
-    @checks.bot_has_permissions(embed_links=True)
-    async def id3(self, ctx, *, query: str):
-        """Monster info (main tab)"""
-        await self._do_id(ctx, query)
 
     async def _get_monster(self, ctx, query) -> Optional["MonsterModel"]:
         dbcog = await self.get_dbcog()

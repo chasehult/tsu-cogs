@@ -454,6 +454,11 @@ class MonsterIndex:
                                    lambda m: (m.name_ja.startswith('ドット') or m.name_en.startswith('pixel')
                                               or self.graph.true_evo_type(m).value == "Pixel"),
                                    else_mods=EVO_MAP[EvoTypes.NONPIXEL])
+
+        # Ordeal
+        self.add_numbered_modifier(monster, modifiers, EVO_MAP[EvoTypes.ORDEAL],
+                                   lambda m: self.graph.true_evo_type(m).value == "Ordeal")
+
         # Depth
         modifiers.add(f"{int(self.graph.get_monster_depth(monster))}depth")
 

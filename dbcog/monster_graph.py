@@ -122,9 +122,11 @@ ORDER BY
 """
 
 EVOS_QUERY = """SELECT
-  evolutions{0}.*
+  evolutions{0}.*,
+  dungeons.name_en AS evo_dungeon_name
 FROM
-  evolutions{0}"""
+  evolutions{0}
+  LEFT OUTER JOIN dungeons ON dungeon_id = evo_dungeon_id"""
 
 TRANSFORMS_QUERY = """SELECT
   transformations{0}.*
@@ -400,6 +402,8 @@ class MonsterGraph:
                 mat_3_id=self.debug_validate_id(e.mat_3_id),
                 mat_4_id=self.debug_validate_id(e.mat_4_id),
                 mat_5_id=self.debug_validate_id(e.mat_5_id),
+                evo_dungeon_id=e.evo_dungeon_id,
+                evo_dungeon_name=e.evo_dungeon_name,
                 tstamp=e.tstamp,
             )
 
