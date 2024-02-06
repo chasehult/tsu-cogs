@@ -622,6 +622,10 @@ class MonsterGraph:
         prev_evo = self.get_evolution(monster)
         return prev_evo is not None and prev_evo.reversible
 
+    def monster_is_ordeal_evo(self, monster: MonsterModel) -> bool:
+        prev_evo = self.get_evolution(monster)
+        return prev_evo is not None and prev_evo.ordeal
+
     def monster_is_reincarnated(self, monster: MonsterModel) -> bool:
         if self.monster_is_reversible_evo(monster):
             return False
