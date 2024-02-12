@@ -977,7 +977,7 @@ class PadInfo(commands.Cog):
         fm_flags = await self.bot.get_cog("DBCog").config.user(ctx.author).fm_flags()
         intro = f"Here are your current `{ctx.prefix}id` preference settings:\n"
         user_settings = {
-            "cardlevel": '110' if 'cardlevel' not in fm_flags else CardLevelModifier(fm_flags['cardlevel']).name[2:],
+            "cardlevel": '120' if 'cardlevel' not in fm_flags else CardLevelModifier(fm_flags['cardlevel']).name[2:],
             "cardmode": 'Solo' if 'cardmode' not in fm_flags else CardModeModifier(fm_flags['cardmode']).name.title(),
             "cardplus": '297' if 'cardplus' not in fm_flags else CardPlusModifier(fm_flags['cardplus']).name[4:],
             "evogrouping": 'Grouped' if 'evogrouping' not in fm_flags or fm_flags['evogrouping'] == 1 else 'Split',
